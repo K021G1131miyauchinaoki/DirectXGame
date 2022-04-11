@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 #include "Audio.h"
-#include "DirectXCommon.h"
 #include "DebugText.h"
+#include "DirectXCommon.h"
 #include "Input.h"
 #include "Model.h"
 #include "SafeDelete.h"
@@ -15,6 +15,7 @@
 /// ゲームシーン
 /// </summary>
 class GameScene {
+
   public: // メンバ関数
 	/// <summary>
 	/// コンストクラタ
@@ -48,16 +49,10 @@ class GameScene {
 	DebugText* debugText_ = nullptr;
 
 	uint32_t textureHandle_ = 0;
-	Sprite* sprite_ = nullptr;
-	
 	Model* model_ = nullptr;
-	
-	WorldTransform worldtransform_;
-	ViewProjection viewprojection_;
 
-	uint32_t soundDataHandle_ = 0;
-	uint32_t voiceHandle_ = 0;
-	int32_t value_ = 0;
+	WorldTransform worldTransfrom_;
+	ViewProjection viewProjection_;
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
