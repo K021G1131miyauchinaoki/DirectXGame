@@ -22,11 +22,22 @@ void GameScene::Initialize() {
 	worldTransfrom_.translation_ = {10.0f, 10.0f, 10.0f};
 	worldTransfrom_.Initialize();
 	viewProjection_.Initialize();
-
-	
 }
 
-void GameScene::Update() {}
+void GameScene::Update() { 
+	debugText_->SetPos(50, 70);
+	debugText_->Printf( "translation:(%f,%f,%f)",
+		worldTransfrom_.translation_.x,worldTransfrom_.translation_.y,worldTransfrom_.translation_.z);
+
+	debugText_->SetPos(50, 90);
+	debugText_->Printf("rotation:(%f,%f,%f)",
+		worldTransfrom_.rotation_.x, worldTransfrom_.rotation_.y,worldTransfrom_.rotation_.z);
+
+	debugText_->SetPos(50, 110);
+	debugText_->Printf("rotation:(%f,%f,%f)", 
+		worldTransfrom_.scale_.x, worldTransfrom_.scale_.y,
+	  worldTransfrom_.scale_.z);
+}
 
 void GameScene::Draw() {
 
@@ -57,7 +68,7 @@ void GameScene::Draw() {
 	model_->Draw(worldTransfrom_, viewProjection_, textureHandle_);
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
-	
+
 #pragma endregion
 
 #pragma region 前景スプライト描画
