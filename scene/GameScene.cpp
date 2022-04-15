@@ -34,7 +34,7 @@ void GameScene::Update() {
 		worldTransfrom_.rotation_.x, worldTransfrom_.rotation_.y,worldTransfrom_.rotation_.z);
 
 	debugText_->SetPos(50, 110);
-	debugText_->Printf("rotation:(%f,%f,%f)", 
+	debugText_->Printf("scale_:(%f,%f,%f)", 
 		worldTransfrom_.scale_.x, worldTransfrom_.scale_.y,
 	  worldTransfrom_.scale_.z);
 }
