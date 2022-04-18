@@ -39,14 +39,18 @@ void GameScene::Initialize() {
 		worldTransfrom_[i].translation_ = {posDist(enigine), posDist(enigine), posDist(enigine)};
 		worldTransfrom_[i].Initialize();
 	}
-	//カメラ視点座標を設定
-	viewProjection_.target = {10, 0, 0};
+	//カメラ垂直方向視野角を設定
+	viewProjection_.fovAngleY = XMConvertToRadians(45.0f);
 
-	//カメラ視点座標を設定
-	viewProjection_.eye = {0, 0, -50};
+	//アスペクト比を設定
+	viewProjection_.aspectRatio = 1.0f;
 
-	//カメラ上方向ベクトルを設定
-	viewProjection_.up = {cosf(XM_PI / 4.0f), sinf(XM_PI / 4.0f), 0.0f};
+	//ニアクリップ距離を設定
+	viewProjection_.nearZ = 52.0f;
+
+	//ファーストクリップ距離を設定
+	viewProjection_.farZ = 53.0f;
+
 	//ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 
@@ -54,53 +58,53 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() { 
-	//視点の移動ベクトル
-	XMFLOAT3 move = {0, 0, 0};
-	//視点の移動スピード
-	const float kEyeSpeed = 0.2f;
+	////視点の移動ベクトル
+	//XMFLOAT3 move = {0, 0, 0};
+	////視点の移動スピード
+	//const float kEyeSpeed = 0.2f;
 
-	//
-	if (input_->PushKey(DIK_W)) {
-		move = {0,0,kEyeSpeed};
-	} else if (input_->PushKey(DIK_S))
-	{
-		move = {0, 0, -kEyeSpeed};	 
-	}
-	//
-	viewProjection_.eye.x+= move.x;
-	viewProjection_.eye.y+= move.y;
-	viewProjection_.eye.z+= move.z;
-	//
-	viewProjection_.UpdateMatrix();
+	////
+	//if (input_->PushKey(DIK_W)) {
+	//	move = {0,0,kEyeSpeed};
+	//} else if (input_->PushKey(DIK_S))
+	//{
+	//	move = {0, 0, -kEyeSpeed};	 
+	//}
+	////
+	//viewProjection_.eye.x+= move.x;
+	//viewProjection_.eye.y+= move.y;
+	//viewProjection_.eye.z+= move.z;
+	////
+	//viewProjection_.UpdateMatrix();
 
 	//デバック用表示
 	debugText_->SetPos(50, 50);
 	debugText_->Printf(
 	  "eye:(%f,%f,%f)", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
 
-	//注視店移動処理
-	{
-		//注視点の移動ベクトル
-		XMFLOAT3 move = {0, 0, 0};
+	////注視店移動処理
+	//{
+	//	//注視点の移動ベクトル
+	//	XMFLOAT3 move = {0, 0, 0};
 
-		//注視点の移動スピード
-		const float kTargetSpeed = 2.0f;
+	//	//注視点の移動スピード
+	//	const float kTargetSpeed = 2.0f;
 
-		//押した方向で移動ベクトルを変更
-		if (input_->PushKey(DIK_LEFT)) {
-			move = {-kTargetSpeed, 0, 0};
-		} else if (input_->PushKey(DIK_RIGHT)) {
-			move = {kTargetSpeed, 0, 0};
-		}
+	//	//押した方向で移動ベクトルを変更
+	//	if (input_->PushKey(DIK_LEFT)) {
+	//		move = {-kTargetSpeed, 0, 0};
+	//	} else if (input_->PushKey(DIK_RIGHT)) {
+	//		move = {kTargetSpeed, 0, 0};
+	//	}
 
-		//注視点移動
-		viewProjection_.target.x+= move.x;
-		viewProjection_.target.y+= move.y;
-		viewProjection_.target.z+= move.z;
+	//	//注視点移動
+	//	viewProjection_.target.x+= move.x;
+	//	viewProjection_.target.y+= move.y;
+	//	viewProjection_.target.z+= move.z;
 
-		//行列の再計算
+	//	//行列の再計算
 
-		viewProjection_.UpdateMatrix();
+	//	viewProjection_.UpdateMatrix();
 
 		//デバック用
 		debugText_->SetPos(50, 70);
@@ -108,29 +112,70 @@ void GameScene::Update() {
 		  "target:(%f,%f,%f)", viewProjection_.target.x, viewProjection_.target.y,
 		  viewProjection_.target.z);
 
-	}
+	//}
 
-	//上方向の回転処理
-	{
-		//上方向の回転スピード
-		const float kUpRotSpeed = 0.05f;
-		//押した方向で移動ベクトルを変更
-		if (input_->PushKey(DIK_SPACE)) {
-			viewAngle += kUpRotSpeed;
-			//2πこえたら0に戻す
-			viewAngle = fmodf(viewAngle, XM_2PI);
-		}
-		//上方向ベクトルを計算
-		viewProjection_.up = {cosf(viewAngle), sinf(viewAngle), 0.0f};
-	
-		//行列の再計算
-		viewProjection_.UpdateMatrix();
+	////上方向の回転処理
+	//{
+	//	//上方向の回転スピード
+	//	const float kUpRotSpeed = 0.05f;
+	//	//押した方向で移動ベクトルを変更
+	//	if (input_->PushKey(DIK_SPACE)) {
+	//		viewAngle += kUpRotSpeed;
+	//		//2πこえたら0に戻す
+	//		viewAngle = fmodf(viewAngle, XM_2PI);
+	//	}
+	//	//上方向ベクトルを計算
+	//	viewProjection_.up = {cosf(viewAngle), sinf(viewAngle), 0.0f};
+	//
+	//	//行列の再計算
+	//	viewProjection_.UpdateMatrix();
 
 		//デバック用
 		debugText_->SetPos(50, 90);
 		debugText_->Printf(
 		  "up:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y, viewProjection_.up.z);
 	
+	//}
+	//fov変更処理
+	{
+			//上キーで視野角が広がる
+		//if (input_->PushKey(DIK_UP)) {
+		//	viewProjection_.fovAngleY += 0.01f;
+		//	viewProjection_.fovAngleY = min(viewProjection_.fovAngleY, XM_PI);
+		//} 
+		////下キーで視野角が狭まる
+		//else if (input_->PushKey(DIK_DOWN))
+		//{
+		//	viewProjection_.fovAngleY -= 0.01f;
+		//	viewProjection_.fovAngleY = max(viewProjection_.fovAngleY, 0.01f);
+		//}
+
+		////行列の再計算
+		//viewProjection_.UpdateMatrix();
+
+		//デバック用
+		debugText_->SetPos(50, 110);
+		debugText_->Printf("fovAngle(Degree):%f", XMConvertToDegrees(viewProjection_.fovAngleY));
+	}
+
+	//クリップ距離変更処理
+	{
+		//上下キーでニアクリップ距離を増減
+		if (input_->PushKey(DIK_UP)) {
+			viewProjection_.nearZ += 0.1f;
+			
+		}
+		else if (input_->PushKey(DIK_DOWN)) {
+			viewProjection_.nearZ -= 0.1f;
+		}
+
+		//行列の再計算
+		viewProjection_.UpdateMatrix();
+		
+		//デバック用
+		debugText_->SetPos(50, 130);
+		debugText_->Printf("nearZ:%f",viewProjection_.nearZ);
+
 	}
 }
 
