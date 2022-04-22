@@ -146,12 +146,12 @@ void GameScene::Update() {
 	//fov変更処理
 	{
 			//上キーで視野角が広がる
-		if (input_->PushKey(DIK_S)) {
+		if (input_->PushKey(DIK_W)) {
 			viewProjection_.fovAngleY += 0.01f;
 			viewProjection_.fovAngleY = min(viewProjection_.fovAngleY, XM_PI);
 		} 
 		//下キーで視野角が狭まる
-		else if (input_->PushKey(DIK_W))
+		else if (input_->PushKey(DIK_S))
 		{
 			viewProjection_.fovAngleY -= 0.01f;
 			viewProjection_.fovAngleY = max(viewProjection_.fovAngleY, 0.01f);
