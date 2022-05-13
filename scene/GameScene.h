@@ -1,15 +1,17 @@
 ﻿#pragma once
 
 #include "Audio.h"
-#include "DebugText.h"
 #include "DirectXCommon.h"
+#include "DebugText.h"
 #include "Input.h"
 #include "Model.h"
 #include "SafeDelete.h"
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
-#include <DirectXMath.h>
+#include"DebugCamera.h"
+#include"Vector3.h"
+#include"Vector4.h"
 
 /// <summary>
 /// ゲームシーン
@@ -48,14 +50,17 @@ class GameScene {
 	Audio* audio_ = nullptr;
 	DebugText* debugText_ = nullptr;
 
-	uint32_t textureHandle_ = 0;
+	uint32_t	textureHandle_ = 0;
 	Model* model_ = nullptr;
 
-	WorldTransform worldTransfrom_[100];
+	WorldTransform worldTransfrom_;
 	ViewProjection viewProjection_;
 
-	//
-	float viewAngle = 0.0f;
+	DebugCamera* debugCamera_ = nullptr;
+
+	Vector3 vec3 ;
+	Vector4	vec4;
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
