@@ -6,7 +6,79 @@
 #include <cassert>
 
 
+void mat(WorldTransform	w,float Sx, float Sy, float Sz, float Mx, float My, float Mz, float Tx, float Ty, float Tz ){
+	// xyz方向のスケーリング設定
+	w.scale_ = {1, 1, 1};
+	//スケーリング行列を宣言
+	Matrix4 matScale;
+	matScale.m[0][0] = w.scale_.x;
+	matScale.m[1][1] = w.scale_.y;
+	matScale.m[2][2] = w.scale_.z;
+	matScale.m[3][3] = 1;
+#pragma endregion
 
+	//単位行列
+	Matrix4 matIdentity;
+	matIdentity.m[0][0] = 1;
+	matIdentity.m[1][1] = 1;
+	matIdentity.m[2][2] = 1;
+	matIdentity.m[3][3] = 1;
+
+#pragma region 回転
+	// xyz軸周りの回転角を設定
+	w.rotation_ = {1.0f, 1.0f, 1.0f};
+
+	//合成用回転行列を宣言
+	Matrix4 matRot = matIdentity;
+
+	Matrix4 matRotX = matIdentity;
+	Matrix4 matRotY = matIdentity;
+	Matrix4 matRotZ = matIdentity;
+
+	// z軸回転行列を宣言
+	matRotZ.m[0][0] = cos(w.rotation_.z);
+	matRotZ.m[0][1] = sin(w.rotation_.z);
+	matRotZ.m[1][0] = -sin(w.rotation_.z);
+	matRotZ.m[1][1] = cos(w.rotation_.z);
+
+	// x軸回転行列を宣言
+	matRotX.m[1][1] = cos(w.rotation_.x);
+	matRotX.m[1][2] = sin(w.rotation_.x);
+	matRotX.m[2][1] = -sin(w.rotation_.x);
+	matRotX.m[2][2] = cos(w.rotation_.x);
+
+	// y軸回転行列を宣言
+	matRotY.m[0][0] = cos(w.rotation_.y);
+	matRotY.m[0][2] = -sin(w.rotation_.y);
+	matRotY.m[2][0] = sin(w.rotation_.y);
+	matRotY.m[2][2] = cos(w.rotation_.y);
+
+	matRot *= matRotZ;
+	matRot *= matRotX;
+	matRot *= matRotY;
+
+#pragma endregion
+
+#pragma region 平行移動
+	// x,y,z軸周りの平行移動を設定
+	w.translation_ = {0.0f, 10.0f, 0.0f};
+	//平行移動行列を宣言
+	Matrix4 matTrans = MathUtility::Matrix4Identity();
+
+	matTrans.m[3][0] = w.translation_.x;
+	matTrans.m[3][1] = w.translation_.y;
+	matTrans.m[3][2] = w.translation_.z;
+	matTrans.m[3][3] = 1;
+
+#pragma endregion
+	Matrix4 matComb = matScale *= matRot *= matTrans;
+
+	w.matWorld_ = matIdentity;
+	w.matWorld_ *= matComb;
+
+	//行列の転送
+	w.TransferMatrix();
+};
 
 
 GameScene::GameScene() {}
@@ -37,79 +109,7 @@ void GameScene::Initialize() {
 	//ライン描画が参照するビュープロジェクションを指定する
 	PrimitiveDrawer::GetInstance()->SetViewProjection(&debugCamera_->GetViewProjection());
 
-	#pragma	region	スケーリング
-	//xyz方向のスケーリング設定
-	worldTransfrom_.scale_ = {1, 1, 1};
-	//スケーリング行列を宣言
-	Matrix4 matScale;
-	matScale.m[0][0] = worldTransfrom_.scale_.x;
-	matScale.m[1][1] = worldTransfrom_.scale_.y;
-	matScale.m[2][2] = worldTransfrom_.scale_.z;
-	matScale.m[3][3] = 1;
-	#pragma	endregion
-
-	//単位行列
-	Matrix4 matIdentity;
-	matIdentity.m[0][0] = 1;
-	matIdentity.m[1][1] = 1;
-	matIdentity.m[2][2] = 1;
-	matIdentity.m[3][3] = 1;
-
-	#pragma	region	回転
-	//xyz軸周りの回転角を設定
-	worldTransfrom_.rotation_ = {1.0f, 1.0f, 1.0f};
-
-	//合成用回転行列を宣言
-	Matrix4 matRot=matIdentity;
-
-	Matrix4 matRotX = matIdentity;
-	Matrix4 matRotY = matIdentity;
-	Matrix4 matRotZ = matIdentity;
-
-	//z軸回転行列を宣言
-	matRotZ.m[0][0] = cos(worldTransfrom_.rotation_.z);
-	matRotZ.m[0][1] = sin(worldTransfrom_.rotation_.z);
-	matRotZ.m[1][0] = -sin(worldTransfrom_.rotation_.z);
-	matRotZ.m[1][1] = cos(worldTransfrom_.rotation_.z);
-	
-	// x軸回転行列を宣言
-	matRotX.m[1][1] = cos(worldTransfrom_.rotation_.x);
-	matRotX.m[1][2] = sin(worldTransfrom_.rotation_.x);
-	matRotX.m[2][1] = -sin(worldTransfrom_.rotation_.x);
-	matRotX.m[2][2] = cos(worldTransfrom_.rotation_.x);
-
-	// y軸回転行列を宣言
-	matRotY.m[0][0] = cos(worldTransfrom_.rotation_.y);
-	matRotY.m[0][2] = -sin( worldTransfrom_.rotation_.y);
-	matRotY.m[2][0] = sin(worldTransfrom_.rotation_.y);
-	matRotY.m[2][2] = cos(worldTransfrom_.rotation_.y);
-
-	matRot *= matRotZ;
-	matRot *= matRotX;
-	matRot *= matRotY;
-
-	
-	#pragma	endregion
-	
-	#pragma region 平行移動
-	// x,y,z軸周りの平行移動を設定
-	worldTransfrom_.translation_ = {0.0f, 10.0f, 0.0f};
-	//平行移動行列を宣言
-	Matrix4 matTrans = MathUtility::Matrix4Identity();
-
-	matTrans.m[3][0] = worldTransfrom_.translation_.x;
-	matTrans.m[3][1] = worldTransfrom_.translation_.y;
-	matTrans.m[3][2] = worldTransfrom_.translation_.z;
-	matTrans.m[3][3] = 1;
-
-#pragma endregion
-	Matrix4 matComb = matScale *= matRot *= matTrans;
-
-	worldTransfrom_.matWorld_ = matIdentity;
-	worldTransfrom_.matWorld_ *= matComb;
-
-	//行列の転送
-	worldTransfrom_.TransferMatrix();
+	mat(worldTransfrom_, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 10.0f, 0.0f);
 	
 }
 
