@@ -5,6 +5,10 @@
 #include "Vector3.h"
 #include <cassert>
 
+
+
+
+
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
@@ -24,8 +28,6 @@ void GameScene::Initialize() {
 	worldTransfrom_.Initialize();
 	viewProjection_.Initialize();
 	debugCamera_ = new DebugCamera(1280, 720);
-	vec3 = Vector3(100, 100, 100);
-	vec4 = Vector4(100, 100, 100, 1);
 
 	//軸方向表示の表示を有効にする
 	AxisIndicator::GetInstance()->SetVisible(true);
@@ -34,6 +36,81 @@ void GameScene::Initialize() {
 
 	//ライン描画が参照するビュープロジェクションを指定する
 	PrimitiveDrawer::GetInstance()->SetViewProjection(&debugCamera_->GetViewProjection());
+
+	#pragma	region	スケーリング
+	//xyz方向のスケーリング設定
+	worldTransfrom_.scale_ = {1, 1, 1};
+	//スケーリング行列を宣言
+	Matrix4 matScale;
+	matScale.m[0][0] = worldTransfrom_.scale_.x;
+	matScale.m[1][1] = worldTransfrom_.scale_.y;
+	matScale.m[2][2] = worldTransfrom_.scale_.z;
+	matScale.m[3][3] = 1;
+	#pragma	endregion
+
+	//単位行列
+	Matrix4 matIdentity;
+	matIdentity.m[0][0] = 1;
+	matIdentity.m[1][1] = 1;
+	matIdentity.m[2][2] = 1;
+	matIdentity.m[3][3] = 1;
+
+	#pragma	region	回転
+	//xyz軸周りの回転角を設定
+	worldTransfrom_.rotation_ = {1.0f, 1.0f, 1.0f};
+
+	//合成用回転行列を宣言
+	Matrix4 matRot=matIdentity;
+
+	Matrix4 matRotX = matIdentity;
+	Matrix4 matRotY = matIdentity;
+	Matrix4 matRotZ = matIdentity;
+
+	//z軸回転行列を宣言
+	matRotZ.m[0][0] = cos(worldTransfrom_.rotation_.z);
+	matRotZ.m[0][1] = sin(worldTransfrom_.rotation_.z);
+	matRotZ.m[1][0] = -sin(worldTransfrom_.rotation_.z);
+	matRotZ.m[1][1] = cos(worldTransfrom_.rotation_.z);
+	
+	// x軸回転行列を宣言
+	matRotX.m[1][1] = cos(worldTransfrom_.rotation_.x);
+	matRotX.m[1][2] = sin(worldTransfrom_.rotation_.x);
+	matRotX.m[2][1] = -sin(worldTransfrom_.rotation_.x);
+	matRotX.m[2][2] = cos(worldTransfrom_.rotation_.x);
+
+	// y軸回転行列を宣言
+	matRotY.m[0][0] = cos(worldTransfrom_.rotation_.y);
+	matRotY.m[0][2] = -sin( worldTransfrom_.rotation_.y);
+	matRotY.m[2][0] = sin(worldTransfrom_.rotation_.y);
+	matRotY.m[2][2] = cos(worldTransfrom_.rotation_.y);
+
+	matRot *= matRotZ;
+	matRot *= matRotX;
+	matRot *= matRotY;
+
+	
+	#pragma	endregion
+	
+	#pragma region 平行移動
+	// x,y,z軸周りの平行移動を設定
+	worldTransfrom_.translation_ = {0.0f, 10.0f, 0.0f};
+	//平行移動行列を宣言
+	Matrix4 matTrans = MathUtility::Matrix4Identity();
+
+	matTrans.m[3][0] = worldTransfrom_.translation_.x;
+	matTrans.m[3][1] = worldTransfrom_.translation_.y;
+	matTrans.m[3][2] = worldTransfrom_.translation_.z;
+	matTrans.m[3][3] = 1;
+
+#pragma endregion
+	Matrix4 matComb = matScale *= matRot *= matTrans;
+
+	worldTransfrom_.matWorld_ = matIdentity;
+	worldTransfrom_.matWorld_ *= matComb;
+
+	//行列の転送
+	worldTransfrom_.TransferMatrix();
+	
 }
 
 void GameScene::Update() { debugCamera_->Update(); }
