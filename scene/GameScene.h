@@ -53,13 +53,15 @@ class GameScene {
 	uint32_t textureHandle_ = 0;
 	Model* model_ = nullptr;
 
-	WorldTransform worldTransfrom_;
+	WorldTransform worldTransforms_[100];
 	ViewProjection viewProjection_;
 
 	DebugCamera* debugCamera_ = nullptr;
 
 	Vector3 vec3;
 	Vector4 vec4;
+
+	float viewAngle = 0.0f;
 
 	/// <summary>
 	/// ゲームシーン用
