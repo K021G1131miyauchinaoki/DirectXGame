@@ -5,6 +5,7 @@
 #include "DirectXCommon.h"
 #include "Input.h"
 #include "Model.h"
+#include "Player.h"
 #include "SafeDelete.h"
 #include "Sprite.h"
 #include "Vector3.h"
@@ -52,7 +53,6 @@ class GameScene {
 	uint32_t textureHandle_ = 0;
 	Model* model_ = nullptr;
 
-	WorldTransform worldTransforms_[2];
 	ViewProjection viewProjection_;
 
 	DebugCamera* debugCamera_ = nullptr;
@@ -62,6 +62,8 @@ class GameScene {
 
 	float viewAngle = 0.0f;
 
+	//自キャラ
+	Player* player_ = nullptr;
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
