@@ -1,4 +1,4 @@
-﻿#pragma once
+﻿#pragma	once
 
 #include "Audio.h"
 #include "DebugCamera.h"
@@ -19,9 +19,9 @@
 class GameScene {
 
   public: // メンバ関数
-	/// <summary>
-	/// コンストクラタ
-	/// </summary>
+	      /// <summary>
+	      /// コンストクラタ
+	      /// </summary>
 	GameScene();
 
 	/// <summary>
