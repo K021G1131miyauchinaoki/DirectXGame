@@ -1,4 +1,4 @@
-﻿#include"GameScene.h"
+﻿#include "GameScene.h"
 #include "AxisIndicator.h"
 #include "PrimitiveDrawer.h"
 #include "TextureManager.h"
@@ -123,8 +123,6 @@ void GameScene::Draw() {
 	/// </summary>
 	//描画
 	player_->Draw(viewProjection_);
-
-	// model_->Draw(worldTransfrom_, viewProjection_, textureHandle_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
