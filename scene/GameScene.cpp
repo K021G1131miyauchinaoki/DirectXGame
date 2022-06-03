@@ -1,4 +1,4 @@
-﻿#include "GameScene.h"
+﻿#include"GameScene.h"
 #include "AxisIndicator.h"
 #include "PrimitiveDrawer.h"
 #include "TextureManager.h"
@@ -7,13 +7,33 @@
 #include <random>
 #define PI (3.14f)
 
-//
-void Mat(
-  WorldTransform w, float Sx, float Sy, float Sz, float Mx, float My, float Mz, float Tx, float Ty,
-  float Tz) {
+void Mat_move(WorldTransform& w, Vector3 move) {
+	//単位行列
+	Matrix4 matIdentity;
+	matIdentity.m[0][0] = 1;
+	matIdentity.m[1][1] = 1;
+	matIdentity.m[2][2] = 1;
+	matIdentity.m[3][3] = 1;
+
+	//平行移動行列を宣言
+	Matrix4 matTrans = MathUtility::Matrix4Identity();
+
+	matTrans.m[3][0] = w.translation_.x;
+	matTrans.m[3][1] = w.translation_.y;
+	matTrans.m[3][2] = w.translation_.z;
+	matTrans.m[3][3] = 1;
+
+	w.matWorld_ = matIdentity;
+	w.matWorld_ *= matTrans;
+
+	//行列の転送
+	w.TransferMatrix();
+}
+
+void Mat(WorldTransform w, Vector3 size, Vector3 rot, Vector3 move) {
 #pragma region スケーリング
 	// xyz方向のスケーリング設定
-	w.scale_ = {Sx, Sy, Sz};
+	w.scale_ = {size.x, size.y, size.z};
 	//スケーリング行列を宣言
 	Matrix4 matScale;
 	matScale.m[0][0] = w.scale_.x;
@@ -31,7 +51,7 @@ void Mat(
 
 #pragma region 回転
 	// xyz軸周りの回転角を設定
-	w.rotation_ = {Mx, My, Mz};
+	w.rotation_ = {rot.x, rot.y, rot.z};
 
 	//合成用回転行列を宣言
 	Matrix4 matRot = matIdentity;
@@ -66,7 +86,7 @@ void Mat(
 
 #pragma region 平行移動
 	// x,y,z軸周りの平行移動を設定
-	w.translation_ = {Tx, Ty, Tz};
+	w.translation_ = {move.x, move.y, move.z};
 	//平行移動行列を宣言
 	Matrix4 matTrans = MathUtility::Matrix4Identity();
 
@@ -121,37 +141,37 @@ void GameScene::Initialize() {
 	textureHandle_ = TextureManager::Load("mario.jpg");
 	model_ = Model::Create();
 
-	//乱数シード生成器
-	std::random_device seed_gen;
-	//メルセンヌ・ツイスターの乱数エンジン
-	std::mt19937_64 engine(seed_gen());
-	//乱数範囲の指定
-	std::uniform_real_distribution<float> dist(-10.0f, 10.0f);
-	//乱数	（座標）
-	std::uniform_real_distribution<float> posDist(-10.0f, 10.0f);
-	//乱数　（回転）
-	std::uniform_real_distribution<float> rotDist(-1.9f, 1.9f);
-	//乱数エンジンを渡し、指定範囲かっランダムな数値を得る
-	float value = dist(engine);
-	value = rotDist(engine);
-	value = posDist(engine);
+#pragma region 乱数
+	////乱数シード生成器
+	// std::random_device seed_gen;
+	////メルセンヌ・ツイスターの乱数エンジン
+	// std::mt19937_64 engine(seed_gen());
+	////乱数範囲の指定
+	// std::uniform_real_distribution<float> dist(-10.0f, 10.0f);
+	////乱数	（座標）
+	// std::uniform_real_distribution<float> posDist(-10.0f, 10.0f);
+	////乱数　（回転）
+	// std::uniform_real_distribution<float> rotDist(-1.9f, 1.9f);
+	////乱数エンジンを渡し、指定範囲かっランダムな数値を得る
+	// float value = dist(engine);
+	// value = rotDist(engine);
+	// value = posDist(engine);
+#pragma endregion
+	//親　0番
+	worldTransforms_[0].Initialize();
 
-	for (WorldTransform& worldTransform : worldTransforms_) {
-		worldTransform.Initialize();
-		Mat(
-		  worldTransform,
-		  /*サイズ*/ 1.0f, 1.0f, 1.0f,
-		  /*回転*/ rotDist(engine), rotDist(engine), rotDist(engine),
-		  /*移動*/ posDist(engine), posDist(engine), posDist(engine));
-	}
+	//子 1番
+	worldTransforms_[1].Initialize();
+	worldTransforms_[1].translation_ = {0, 4.5f, 0};
+	worldTransforms_[1].parent_ = &worldTransforms_[0];
 	//カメラ垂直方向視野角を設定
-	viewProjection_.fovAngleY = Radian_transform(10.0f);
+	viewProjection_.fovAngleY = Radian_transform(20.0f);
 	//アスペクト比
 	// viewProjection_.aspectRatio = 1.0f;
 	//ニアクリップ距離を設定
-	viewProjection_.nearZ = 52.0f;
+	// viewProjection_.nearZ = 52.0f;
 	//ファークリップ距離を設定
-	viewProjection_.farZ = 53.0f;
+	// viewProjection_.farZ = 53.0f;
 
 	viewProjection_.Initialize();
 	debugCamera_ = new DebugCamera(1280, 720);
@@ -271,18 +291,43 @@ void GameScene::Update() {
 #pragma region クリップ距離変更処理
 	{
 		//上下キーでニアクリップ距離を増減
-		if (input_->PushKey(DIK_UP)) {
-			viewProjection_.nearZ += 0.1f;
-		} else if (input_->PushKey(DIK_DOWN)) {
-			viewProjection_.nearZ -= 0.1f;
+		/*if (input_->PushKey(DIK_UP))
+		{
+		    viewProjection_.nearZ += 0.1f;
 		}
+		else if(input_->PushKey(DIK_DOWN))
+		{
+		    viewProjection_.nearZ -= 0.1f;
+		}*/
 		//行列の再計算
-		viewProjection_.UpdateMatrix();
+		// viewProjection_.UpdateMatrix();
 
 		//デバッグ用表示
 		debugText_->SetPos(50, 130);
 		debugText_->Printf("nearZ:%f", viewProjection_.nearZ);
 	}
+#pragma endregion
+
+#pragma region キャラクターの移動処理
+	{
+		//キャラクターの移動ベクトル
+		Vector3 move = {0, 0, 0};
+		const float kSpeed = 0.2f;
+		if (input_->PushKey(DIK_LEFT)) {
+			move = {-kSpeed, 0, 0};
+		} else if (input_->PushKey(DIK_RIGHT)) {
+			move = {kSpeed, 0, 0};
+		}
+
+		worldTransforms_[0].translation_ += move;
+		Mat_move(worldTransforms_[0], move);
+
+		debugText_->SetPos(50, 150);
+		debugText_->Printf(
+		  "Trans:(%f,%f,%f)", worldTransforms_[0].translation_.x,
+		  worldTransforms_[0].translation_.y, worldTransforms_[0].translation_.z);
+	}
+
 #pragma endregion
 }
 
@@ -313,9 +358,10 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 	//描画
-	for (WorldTransform& worldTransform : worldTransforms_) {
-		model_->Draw(worldTransform, viewProjection_, textureHandle_);
-	}
+
+	model_->Draw(worldTransforms_[0], viewProjection_, textureHandle_);
+	model_->Draw(worldTransforms_[1], viewProjection_, textureHandle_);
+
 	// model_->Draw(worldTransfrom_, viewProjection_, textureHandle_);
 
 	// 3Dオブジェクト描画後処理

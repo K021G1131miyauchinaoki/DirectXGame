@@ -1,5 +1,4 @@
 ﻿#pragma	once
-
 #include "Audio.h"
 #include "DebugCamera.h"
 #include "DebugText.h"
@@ -53,7 +52,7 @@ class GameScene {
 	uint32_t textureHandle_ = 0;
 	Model* model_ = nullptr;
 
-	WorldTransform worldTransforms_[100];
+	WorldTransform worldTransforms_[2];
 	ViewProjection viewProjection_;
 
 	DebugCamera* debugCamera_ = nullptr;
