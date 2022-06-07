@@ -3,6 +3,8 @@
 #include "Model.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include<assert.h>
+#include"PayerBullet.h"
 #pragma once
 
 ///< summary>
@@ -17,6 +19,8 @@ class Player {
 	//描画処理
 	void Draw(ViewProjection& viewProjection);
 
+	void Attack();
+
   private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
@@ -28,4 +32,6 @@ class Player {
 	Input* input_ = nullptr;
 	//デバックテキスト
 	DebugText* debugText_ = nullptr;
+
+	PlayerBullet* bullet_ = nullptr;
 };

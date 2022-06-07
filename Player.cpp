@@ -66,8 +66,26 @@ void Player::Update() {
 	  "Player:(%f,%f,%f)", worldTransform_.translation_.x, worldTransform_.translation_.y,
 	  worldTransform_.translation_.z);
 #pragma endregion
+	Attack();
+	if (bullet_) {
+		bullet_->Update();
+	}
 }
+
+void Player::Attack() {
+	if (input_->PushKey(DIK_SPACE)) {
+		PlayerBullet* newBullet = new PlayerBullet();
+		newBullet->Initialize(model_, worldTransform_.translation_);
+
+		bullet_ = newBullet;
+	}
+}
+
 
 void Player::Draw(ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
+	if (bullet_) {
+		bullet_->Draw(viewProjection);
+	}
+
 }

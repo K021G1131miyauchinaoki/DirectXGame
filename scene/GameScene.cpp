@@ -32,7 +32,7 @@ GameScene::GameScene() {}
 GameScene::~GameScene() {
 	delete model_;
 	//
-	//delete debugCamera_;
+	// delete debugCamera_;
 	//
 	delete player_;
 }
@@ -75,7 +75,7 @@ void GameScene::Initialize() {
 	// viewProjection_.farZ = 53.0f;
 
 	viewProjection_.Initialize();
-	//debugCamera_ = new DebugCamera(1280, 720);
+	// debugCamera_ = new DebugCamera(1280, 720);
 
 	//軸方向表示の表示を有効にする
 	AxisIndicator::GetInstance()->SetVisible(true);
@@ -83,7 +83,7 @@ void GameScene::Initialize() {
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 
 	//ライン描画が参照するビュープロジェクションを指定する
-	//PrimitiveDrawer::GetInstance()->SetViewProjection(&debugCamera_->GetViewProjection());
+	// PrimitiveDrawer::GetInstance()->SetViewProjection(&debugCamera_->GetViewProjection());
 }
 
 void GameScene::Update() {
@@ -91,8 +91,9 @@ void GameScene::Update() {
 	debugText_->SetPos(50, 50);
 	debugText_->Printf(
 	  "eye:(%f,%f,%f)", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
-	//debugCamera_->Update();
+	// debugCamera_->Update();
 	player_->Update();
+	
 }
 
 void GameScene::Draw() {
