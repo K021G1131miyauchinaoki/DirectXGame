@@ -5,6 +5,8 @@
 #include "WorldTransform.h"
 #include<assert.h>
 #include"PayerBullet.h"
+#include<memory>
+#include<list>
 #pragma once
 
 ///< summary>
@@ -34,6 +36,6 @@ class Player {
 	Input* input_ = nullptr;
 	//デバックテキスト
 	DebugText* debugText_ = nullptr;
-
-	PlayerBullet* bullet_ = nullptr;
+	//弾
+	std::unique_ptr<PlayerBullet> bullets_;
 };

@@ -114,18 +114,18 @@ void Player::Update() {
 	
 #pragma endregion
 	Attack();
-	if (bullet_) {
-		bullet_->Update();
+	if (std::unique_ptr<PlayerBullet> & bullet:bullets_) {
+		bullets_->Update();
 	}
 	
 }
 
 void Player::Attack() {
 	if (input_->PushKey(DIK_SPACE)) {
-		PlayerBullet* newBullet = new PlayerBullet();
+		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
 		newBullet->Initialize(model_, worldTransform_.translation_);
 
-		bullet_ = newBullet;	
+		bullets_.push_back(std::move(newBullet));	
 	}
 }
 
@@ -148,8 +148,8 @@ Matrix4 Player::Rotate() {
 
 void Player::Draw(ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
-	if (bullet_) {
-		bullet_->Draw(viewProjection);
+	if (std::unique_ptr<PlayerBullet>&bullet:bullets_) {
+		bullets_->Draw(viewProjection);
 	}
 
 }
