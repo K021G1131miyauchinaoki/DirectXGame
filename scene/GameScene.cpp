@@ -6,8 +6,7 @@
 #include <cassert>
 #include <random>
 #define PI (3.14f)
-
-void Mat_move(WorldTransform& w, Vector3 move) {
+Matrix4 matIdentity() {
 	//単位行列
 	Matrix4 matIdentity;
 	matIdentity.m[0][0] = 1;
@@ -15,50 +14,28 @@ void Mat_move(WorldTransform& w, Vector3 move) {
 	matIdentity.m[2][2] = 1;
 	matIdentity.m[3][3] = 1;
 
-	//平行移動行列を宣言
-	Matrix4 matTrans = MathUtility::Matrix4Identity();
-
-	matTrans.m[3][0] = w.translation_.x;
-	matTrans.m[3][1] = w.translation_.y;
-	matTrans.m[3][2] = w.translation_.z;
-	matTrans.m[3][3] = 1;
-
-	w.matWorld_ = matIdentity;
-	w.matWorld_ *= matTrans;
-
-	//行列の転送
-	w.TransferMatrix();
+	return matIdentity;
 }
-
-void Mat(WorldTransform w, Vector3 size, Vector3 rot, Vector3 move) {
-#pragma region スケーリング
-	// xyz方向のスケーリング設定
-	w.scale_ = {size.x, size.y, size.z};
+Matrix4 Mat_size(WorldTransform& w) {
 	//スケーリング行列を宣言
 	Matrix4 matScale;
 	matScale.m[0][0] = w.scale_.x;
 	matScale.m[1][1] = w.scale_.y;
 	matScale.m[2][2] = w.scale_.z;
 	matScale.m[3][3] = 1;
-#pragma endregion
 
-	//単位行列
-	Matrix4 matIdentity;
-	matIdentity.m[0][0] = 1;
-	matIdentity.m[1][1] = 1;
-	matIdentity.m[2][2] = 1;
-	matIdentity.m[3][3] = 1;
+	w.matWorld_ = matIdentity();
 
-#pragma region 回転
-	// xyz軸周りの回転角を設定
-	w.rotation_ = {rot.x, rot.y, rot.z};
+	return matScale;
+}
 
+Matrix4 Mat_rot(WorldTransform& w) {
 	//合成用回転行列を宣言
-	Matrix4 matRot = matIdentity;
+	Matrix4 matRot = matIdentity();
 
-	Matrix4 matRotX = matIdentity;
-	Matrix4 matRotY = matIdentity;
-	Matrix4 matRotZ = matIdentity;
+	Matrix4 matRotX = matIdentity();
+	Matrix4 matRotY = matIdentity();
+	Matrix4 matRotZ = matIdentity();
 
 	// z軸回転行列を宣言
 	matRotZ.m[0][0] = cos(w.rotation_.z);
@@ -82,11 +59,14 @@ void Mat(WorldTransform w, Vector3 size, Vector3 rot, Vector3 move) {
 	matRot *= matRotX;
 	matRot *= matRotY;
 
-#pragma endregion
+	w.matWorld_ = matIdentity();
 
-#pragma region 平行移動
-	// x,y,z軸周りの平行移動を設定
-	w.translation_ = {move.x, move.y, move.z};
+	return matRot;
+}
+
+Matrix4 Mat_move(WorldTransform& w) {
+	
+
 	//平行移動行列を宣言
 	Matrix4 matTrans = MathUtility::Matrix4Identity();
 
@@ -95,14 +75,18 @@ void Mat(WorldTransform w, Vector3 size, Vector3 rot, Vector3 move) {
 	matTrans.m[3][2] = w.translation_.z;
 	matTrans.m[3][3] = 1;
 
-#pragma endregion
-	Matrix4 matComb = matScale *= matRot *= matTrans;
+	w.matWorld_ = matIdentity();
+	return  matTrans;
+}
 
-	w.matWorld_ = matIdentity;
+Matrix4 Mat(WorldTransform w) {
+	Matrix4 matComb;
+	matComb *= Mat_size(w);
+	matComb *= Mat_rot(w);
+	matComb *= Mat_move(w);
+
+	w.matWorld_ = matIdentity();
 	w.matWorld_ *= matComb;
-
-	//行列の転送
-	w.TransferMatrix();
 };
 
 //ラジアン変換
@@ -320,8 +304,9 @@ void GameScene::Update() {
 		}
 
 		worldTransforms_[0].translation_ += move;
-		Mat_move(worldTransforms_[0], move);
+		worldTransforms_->matWorld_*=Mat_move(worldTransforms_[0]);
 
+		worldTransforms_->TransferMatrix();
 		debugText_->SetPos(50, 150);
 		debugText_->Printf(
 		  "Trans:(%f,%f,%f)", worldTransforms_[0].translation_.x,
