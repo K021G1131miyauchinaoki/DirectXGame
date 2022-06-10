@@ -1,8 +1,6 @@
 #include "Player.h"
 #include <cassert>
-
-//平行移動
-Matrix4 Mat_move(WorldTransform& w) {
+Matrix4 matIdentity() {
 	//単位行列
 	Matrix4 matIdentity;
 	matIdentity.m[0][0] = 1;
@@ -10,7 +8,12 @@ Matrix4 Mat_move(WorldTransform& w) {
 	matIdentity.m[2][2] = 1;
 	matIdentity.m[3][3] = 1;
 
-#pragma region 平行移動
+	return matIdentity;
+}
+//平行移動
+Matrix4 Mat_move(WorldTransform& w) {
+	
+
 	//平行移動行列を宣言
 	Matrix4 matTrans = MathUtility::Matrix4Identity();
 
@@ -19,11 +22,9 @@ Matrix4 Mat_move(WorldTransform& w) {
 	matTrans.m[3][2] = w.translation_.z;
 	matTrans.m[3][3] = 1;
 
-#pragma endregion
-	w.matWorld_ = matIdentity;
-	return w.matWorld_ *= matTrans;
+	return matTrans;
 }
-
+//回転
 Matrix4 Mat_rot(WorldTransform& w) {
 	//単位行列
 	Matrix4 matIdentity;
@@ -32,7 +33,6 @@ Matrix4 Mat_rot(WorldTransform& w) {
 	matIdentity.m[2][2] = 1;
 	matIdentity.m[3][3] = 1;
 
-#pragma region 回転
 	//合成用回転行列を宣言
 	Matrix4 matRot = matIdentity;
 
@@ -62,10 +62,7 @@ Matrix4 Mat_rot(WorldTransform& w) {
 	matRot *= matRotX;
 	matRot *= matRotY;
 
-#pragma endregion
-
-	w.matWorld_ = matIdentity;
-	return	w.matWorld_ *= matRot;
+	return	matRot;
 }
 
 void Player::Initialize(Model* model, uint32_t textureHandle) {
@@ -80,7 +77,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 }
 
 void Player::Update() {
-	Rotate();
+	
 
 	Vector3 move = {0, 0, 0};
 	
@@ -105,8 +102,8 @@ void Player::Update() {
 	worldTransform_.translation_.y = max(worldTransform_.translation_.y, -kMoveLimitY);
 	worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMoveLimitY);
 	
-	Mat_move(worldTransform_);
-	
+	worldTransform_.matWorld_ = matIdentity();
+	worldTransform_.matWorld_ *= Rotate() *= Mat_move(worldTransform_);
 	//行列の転送
 	worldTransform_.TransferMatrix();
 	
@@ -128,11 +125,11 @@ void Player::Attack() {
 		PlayerBullet* newBullet = new PlayerBullet();
 		newBullet->Initialize(model_, worldTransform_.translation_);
 
-		bullet_ = newBullet;
+		bullet_ = newBullet;	
 	}
 }
 
-void Player::Rotate() {
+Matrix4 Player::Rotate() {
 
 	const float kRot = 0.05f;
 	Vector3 Rot = {0, 0, 0};
@@ -143,10 +140,10 @@ void Player::Rotate() {
 	}
 	worldTransform_.rotation_ += Rot;
 
-	Mat_rot(worldTransform_);
+	return Mat_rot(worldTransform_);
 
 	//行列の転送
-	worldTransform_.TransferMatrix();
+	//worldTransform_.TransferMatrix();
 }
 
 void Player::Draw(ViewProjection& viewProjection) {

@@ -7,7 +7,7 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position) {
 
 	worldTransform_.Initialize();
 
-	worldTransform_.translation_ = {0, 0, 0};
+	worldTransform_.translation_ = position;
 }
 
 void PlayerBullet::Update() {
