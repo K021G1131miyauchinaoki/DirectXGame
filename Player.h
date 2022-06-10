@@ -18,8 +18,10 @@ class Player {
 	void Update();
 	//描画処理
 	void Draw(ViewProjection& viewProjection);
-
+	//撃つ処理
 	void Attack();
+	//回転処理
+	void Rotate();
 
   private:
 	//ワールド変換データ

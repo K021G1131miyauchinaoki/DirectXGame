@@ -92,6 +92,7 @@ void GameScene::Update() {
 	debugText_->Printf(
 	  "eye:(%f,%f,%f)", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
 	// debugCamera_->Update();
+	player_->Rotate();
 	player_->Update();
 	
 }
