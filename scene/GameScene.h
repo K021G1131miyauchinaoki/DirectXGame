@@ -52,7 +52,7 @@ class GameScene {
 	uint32_t textureHandle_ = 0;
 	Model* model_ = nullptr;
 
-	WorldTransform worldTransforms_[2];
+	WorldTransform worldTransforms_[9];
 	ViewProjection viewProjection_;
 
 	DebugCamera* debugCamera_ = nullptr;
@@ -62,6 +62,19 @@ class GameScene {
 
 	float viewAngle = 0.0f;
 
+	enum PartId {
+		kRoot,	//大元
+		kSpine,	//脊髄
+		kChest,	//胸
+		kHead,	//頭
+		kArmL,	//左腕
+		kArmR,	//右腕
+		kHip,	//尻
+		kLegL,	//左足
+		kLegR,  //右足
+
+		kNumPartId
+	};
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

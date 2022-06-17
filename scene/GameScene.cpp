@@ -1,4 +1,4 @@
-﻿#include"GameScene.h"
+﻿#include "GameScene.h"
 #include "AxisIndicator.h"
 #include "PrimitiveDrawer.h"
 #include "TextureManager.h"
@@ -6,6 +6,8 @@
 #include <cassert>
 #include <random>
 #define PI (3.14f)
+
+#pragma region 行列
 Matrix4 matIdentity() {
 	//単位行列
 	Matrix4 matIdentity;
@@ -16,6 +18,7 @@ Matrix4 matIdentity() {
 
 	return matIdentity;
 }
+
 Matrix4 Mat_size(WorldTransform& w) {
 	//スケーリング行列を宣言
 	Matrix4 matScale;
@@ -65,7 +68,6 @@ Matrix4 Mat_rot(WorldTransform& w) {
 }
 
 Matrix4 Mat_move(WorldTransform& w) {
-	
 
 	//平行移動行列を宣言
 	Matrix4 matTrans = MathUtility::Matrix4Identity();
@@ -76,18 +78,26 @@ Matrix4 Mat_move(WorldTransform& w) {
 	matTrans.m[3][3] = 1;
 
 	w.matWorld_ = matIdentity();
-	return  matTrans;
+	return matTrans;
 }
 
 Matrix4 Mat(WorldTransform w) {
 	Matrix4 matComb;
+	matComb = matIdentity();
 	matComb *= Mat_size(w);
 	matComb *= Mat_rot(w);
 	matComb *= Mat_move(w);
 
-	w.matWorld_ = matIdentity();
-	w.matWorld_ *= matComb;
+	return matComb;
 };
+
+// void  Mat(WorldTransform &w) {
+//	w.matWorld_ = matIdentity();
+//	w.matWorld_ *= Mat_size(w);
+//	w.matWorld_ *= Mat_rot(w);
+//	w.matWorld_ *= Mat_move(w);
+// };
+#pragma endregion
 
 //ラジアン変換
 float Radian_transform(float degree) {
@@ -125,29 +135,47 @@ void GameScene::Initialize() {
 	textureHandle_ = TextureManager::Load("mario.jpg");
 	model_ = Model::Create();
 
-#pragma region 乱数
-	////乱数シード生成器
-	// std::random_device seed_gen;
-	////メルセンヌ・ツイスターの乱数エンジン
-	// std::mt19937_64 engine(seed_gen());
-	////乱数範囲の指定
-	// std::uniform_real_distribution<float> dist(-10.0f, 10.0f);
-	////乱数	（座標）
-	// std::uniform_real_distribution<float> posDist(-10.0f, 10.0f);
-	////乱数　（回転）
-	// std::uniform_real_distribution<float> rotDist(-1.9f, 1.9f);
-	////乱数エンジンを渡し、指定範囲かっランダムな数値を得る
-	// float value = dist(engine);
-	// value = rotDist(engine);
-	// value = posDist(engine);
-#pragma endregion
-	//親　0番
-	worldTransforms_[0].Initialize();
+	#pragma region	親子関係
+	//大元
+	worldTransforms_[PartId::kRoot].Initialize();
+	//脊髄
+	worldTransforms_[PartId::kSpine].Initialize();
+	worldTransforms_[PartId::kSpine].parent_ = &worldTransforms_[PartId::kRoot];
+	worldTransforms_[PartId::kSpine].translation_ = {0, 0, 0};
+	//上半身
+	//胸
+	worldTransforms_[PartId::kChest].Initialize();
+	worldTransforms_[PartId::kChest].parent_ = &worldTransforms_[PartId::kSpine];
+	worldTransforms_[PartId::kChest].translation_ = {0, 0, 0};                                         
+	//頭
+	worldTransforms_[PartId::kHead].Initialize();
+	worldTransforms_[PartId::kHead].parent_ = &worldTransforms_[PartId::kChest];
+	worldTransforms_[PartId::kHead].translation_ = {0, 2.5f, 0}; 
+	//右腕
+	worldTransforms_[PartId::kArmR].Initialize();
+	worldTransforms_[PartId::kArmR].parent_ = &worldTransforms_[PartId::kChest];
+	worldTransforms_[PartId::kArmR].translation_ = {2.5f, 0, 0}; 
+	//左腕
+	worldTransforms_[PartId::kArmL].Initialize();
+	worldTransforms_[PartId::kArmL].parent_ = &worldTransforms_[PartId::kChest];
+	worldTransforms_[PartId::kArmL].translation_ = {-2.5f, 0, 0}; 
+	
+	//下半身
+	//尻
+	worldTransforms_[PartId::kHip].Initialize();
+	worldTransforms_[PartId::kHip].parent_ = &worldTransforms_[PartId::kSpine];
+	worldTransforms_[PartId::kHip].translation_ = {0, -2.5f, 0}; 
+	//右足
+	worldTransforms_[PartId::kLegR].Initialize();
+	worldTransforms_[PartId::kLegR].parent_ = &worldTransforms_[PartId::kHip];
+	worldTransforms_[PartId::kLegR].translation_ = {2.5f, -2.5f, 0}; 
+	//左足
+	worldTransforms_[PartId::kLegL].Initialize();
+	worldTransforms_[PartId::kLegL].parent_ = &worldTransforms_[PartId::kHip];
+	worldTransforms_[PartId::kLegL].translation_ = {-2.5f, -2.5f, 0}; 
+	#pragma endregion
 
-	//子 1番
-	worldTransforms_[1].Initialize();
-	worldTransforms_[1].translation_ = {0, 4.5f, 0};
-	worldTransforms_[1].parent_ = &worldTransforms_[0];
+
 	//カメラ垂直方向視野角を設定
 	viewProjection_.fovAngleY = Radian_transform(20.0f);
 	//アスペクト比
@@ -294,25 +322,67 @@ void GameScene::Update() {
 
 #pragma region キャラクターの移動処理
 	{
-		//キャラクターの移動ベクトル
-		Vector3 move = {0, 0, 0};
-		const float kSpeed = 0.2f;
-		if (input_->PushKey(DIK_LEFT)) {
-			move = {-kSpeed, 0, 0};
-		} else if (input_->PushKey(DIK_RIGHT)) {
-			move = {kSpeed, 0, 0};
+		//上半身の回転
+		{
+			const float kRot = 0.05f;
+			if (input_->PushKey(DIK_U)) {
+				worldTransforms_[PartId::kChest].rotation_.y -= kRot;
+			}
+			if (input_->PushKey(DIK_I)) {
+				worldTransforms_[PartId::kChest].rotation_.y += kRot;
+			}
 		}
+		//下半身の回転
+		{
+			const float kRot = 0.05f;
+			if (input_->PushKey(DIK_J)) {
+				worldTransforms_[PartId::kHip].rotation_.y -= kRot;
+			}
+			if (input_->PushKey(DIK_K)) {
+				worldTransforms_[PartId::kHip].rotation_.y += kRot;
+			}
+		}
+		//キャラクターの移動ベクトル
+		{
+			Vector3 move = {0, 0, 0};
+			const float kSpeed = 0.2f;
+			if (input_->PushKey(DIK_LEFT)) {
+				move = {-kSpeed, 0, 0};
+			} else if (input_->PushKey(DIK_RIGHT)) {
+				move = {kSpeed, 0, 0};
+			}
 
-		worldTransforms_[0].translation_ += move;
-		worldTransforms_->matWorld_*=Mat_move(worldTransforms_[0]);
-
-		worldTransforms_->TransferMatrix();
+			worldTransforms_[PartId::kRoot].translation_ += move;
+		}
 		debugText_->SetPos(50, 150);
 		debugText_->Printf(
-		  "Trans:(%f,%f,%f)", worldTransforms_[0].translation_.x,
-		  worldTransforms_[0].translation_.y, worldTransforms_[0].translation_.z);
+		  "Trans:(%f,%f,%f)", worldTransforms_[PartId::kRoot].translation_.x,
+		  worldTransforms_[PartId::kRoot].translation_.y,
+		  worldTransforms_[PartId::kRoot].translation_.z);
 	}
-
+	//子の更新
+	//{
+	//	worldTransforms_[1].matWorld_ = Mat(worldTransforms_[1]);
+	//	if (worldTransforms_[1].parent_ != nullptr) {
+	//		worldTransforms_[1].matWorld_ *= worldTransforms_[1].parent_->matWorld_;
+	//		// worldTransforms_[0].matWorld_ == worldTransforms_[1].parent_->matWorld_;
+	//	}
+	//
+	//	worldTransforms_[1].TransferMatrix();
+	//	debugText_->SetPos(50, 170);
+	//	debugText_->Printf(
+	//	  "Trans:(%f,%f,%f)", worldTransforms_[1].translation_.x,
+	//	  worldTransforms_[1].translation_.y, worldTransforms_[1].translation_.z);
+	//}
+	for (int i = 0; i < kNumPartId; i++) {
+		worldTransforms_[i].matWorld_ = Mat(worldTransforms_[i]);
+		if (worldTransforms_[i].parent_ != nullptr) {
+			worldTransforms_[i].matWorld_ *= worldTransforms_[i].parent_->matWorld_;
+			// worldTransforms_[0].matWorld_ == worldTransforms_[1].parent_->matWorld_;
+		}
+	
+		worldTransforms_[i].TransferMatrix();
+	}
 #pragma endregion
 }
 
@@ -343,9 +413,11 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 	//描画
-
-	model_->Draw(worldTransforms_[0], viewProjection_, textureHandle_);
-	model_->Draw(worldTransforms_[1], viewProjection_, textureHandle_);
+	for (int i = 0; i < kNumPartId; i++) {
+		model_->Draw(worldTransforms_[i], viewProjection_, textureHandle_);
+	}
+	
+	
 
 	// model_->Draw(worldTransfrom_, viewProjection_, textureHandle_);
 
