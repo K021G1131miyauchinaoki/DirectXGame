@@ -66,7 +66,7 @@ void GameScene::Initialize() {
 #pragma endregion
 
 	//カメラ垂直方向視野角を設定
-	viewProjection_.fovAngleY = Radian_transform(20.0f);
+	viewProjection_.fovAngleY = Radian_transform(30.0f);
 	//アスペクト比
 	// viewProjection_.aspectRatio = 1.0f;
 	//ニアクリップ距離を設定

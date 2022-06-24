@@ -1,69 +1,8 @@
 #include "Player.h"
+#include"Mat.h"
 #include <cassert>
-Matrix4 matIdentity() {
-	//単位行列
-	Matrix4 matIdentity;
-	matIdentity.m[0][0] = 1;
-	matIdentity.m[1][1] = 1;
-	matIdentity.m[2][2] = 1;
-	matIdentity.m[3][3] = 1;
 
-	return matIdentity;
-}
-//平行移動
-Matrix4 Mat_move(WorldTransform& w) {
-	
 
-	//平行移動行列を宣言
-	Matrix4 matTrans = MathUtility::Matrix4Identity();
-
-	matTrans.m[3][0] = w.translation_.x;
-	matTrans.m[3][1] = w.translation_.y;
-	matTrans.m[3][2] = w.translation_.z;
-	matTrans.m[3][3] = 1;
-
-	return matTrans;
-}
-//回転
-Matrix4 Mat_rot(WorldTransform& w) {
-	//単位行列
-	Matrix4 matIdentity;
-	matIdentity.m[0][0] = 1;
-	matIdentity.m[1][1] = 1;
-	matIdentity.m[2][2] = 1;
-	matIdentity.m[3][3] = 1;
-
-	//合成用回転行列を宣言
-	Matrix4 matRot = matIdentity;
-
-	Matrix4 matRotX = matIdentity;
-	Matrix4 matRotY = matIdentity;
-	Matrix4 matRotZ = matIdentity;
-
-	// z軸回転行列を宣言
-	matRotZ.m[0][0] = cos(w.rotation_.z);
-	matRotZ.m[0][1] = sin(w.rotation_.z);
-	matRotZ.m[1][0] =-sin(w.rotation_.z);
-	matRotZ.m[1][1] = cos(w.rotation_.z);
-
-	// x軸回転行列を宣言
-	matRotX.m[1][1] = cos(w.rotation_.x);
-	matRotX.m[1][2] = sin(w.rotation_.x);
-	matRotX.m[2][1] =-sin(w.rotation_.x);
-	matRotX.m[2][2] = cos(w.rotation_.x);
-
-	// y軸回転行列を宣言
-	matRotY.m[0][0] = cos(w.rotation_.y);
-	matRotY.m[0][2] =-sin(w.rotation_.y);
-	matRotY.m[2][0] = sin(w.rotation_.y);
-	matRotY.m[2][2] = cos(w.rotation_.y);
-
-	matRot *= matRotZ;
-	matRot *= matRotX;
-	matRot *= matRotY;
-
-	return	matRot;
-}
 
 void Player::Initialize(Model* model, uint32_t textureHandle) {
 	assert(model);
@@ -77,8 +16,9 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 }
 
 void Player::Update() {
-	
-
+	//回転
+	Rotate();
+	//移動
 	Vector3 move = {0, 0, 0};
 	
 	const float speed = 0.2f;
@@ -103,7 +43,7 @@ void Player::Update() {
 	worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMoveLimitY);
 	
 	worldTransform_.matWorld_ = matIdentity();
-	worldTransform_.matWorld_ *= Rotate() *= Mat_move(worldTransform_);
+	worldTransform_.matWorld_ = Mat(worldTransform_);
 	//行列の転送
 	worldTransform_.TransferMatrix();
 	
@@ -123,14 +63,23 @@ void Player::Update() {
 
 void Player::Attack() {
 	if (input_->PushKey(DIK_SPACE)) {
-		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
-		newBullet->Initialize(model_, worldTransform_.translation_);
+		//弾の速度
+		const float kBulletSpeed = 1.0f;
+		Vector3 velocity(0, 0, kBulletSpeed);
 
+		//速度ベクトルを自機の向きに合わせて回転させる
+		velocity = Vec_rot(velocity, worldTransform_.matWorld_);
+
+		//弾を生成し、初期化
+		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
+		newBullet->Initialize(model_, worldTransform_.translation_,velocity);
+
+		//弾を登録する
 		bullets_.push_back(std::move(newBullet));	
 	}
 }
 
-Matrix4 Player::Rotate() {
+void Player::Rotate() {
 
 	const float kRot = 0.05f;
 	Vector3 Rot = {0, 0, 0};
@@ -140,11 +89,6 @@ Matrix4 Player::Rotate() {
 		Rot = {0, -kRot, 0};
 	}
 	worldTransform_.rotation_ += Rot;
-
-	return Mat_rot(worldTransform_);
-
-	//行列の転送
-	//worldTransform_.TransferMatrix();
 }
 
 void Player::Draw(ViewProjection& viewProjection) {

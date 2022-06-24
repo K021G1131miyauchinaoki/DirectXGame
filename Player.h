@@ -23,7 +23,7 @@ class Player {
 	//撃つ処理
 	void Attack();
 	//回転処理
-	Matrix4 Rotate();
+	void Rotate();
 
   private:
 	//ワールド変換データ
