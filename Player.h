@@ -37,5 +37,5 @@ class Player {
 	//デバックテキスト
 	DebugText* debugText_ = nullptr;
 	//弾
-	std::unique_ptr<PlayerBullet> bullets_;
+	std::list<std::unique_ptr<PlayerBullet>> bullets_;
 };

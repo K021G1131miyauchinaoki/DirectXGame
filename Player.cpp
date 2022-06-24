@@ -114,8 +114,9 @@ void Player::Update() {
 	
 #pragma endregion
 	Attack();
-	if (std::unique_ptr<PlayerBullet> & bullet:bullets_) {
-		bullets_->Update();
+	for (std::unique_ptr<PlayerBullet> & bullet : bullets_)
+	{
+		bullet->Update();
 	}
 	
 }
@@ -148,8 +149,8 @@ Matrix4 Player::Rotate() {
 
 void Player::Draw(ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
-	if (std::unique_ptr<PlayerBullet>&bullet:bullets_) {
-		bullets_->Draw(viewProjection);
+	for (std::unique_ptr<PlayerBullet>&bullet:bullets_) {
+		bullet->Draw(viewProjection);
 	}
 
 }
