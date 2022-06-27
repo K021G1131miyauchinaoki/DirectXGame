@@ -6,6 +6,7 @@
 #include "Input.h"
 #include "Model.h"
 #include "Player.h"
+#include"Enemy.h"
 #include "SafeDelete.h"
 #include "Sprite.h"
 #include "Vector3.h"
@@ -51,6 +52,8 @@ class GameScene {
 	DebugText* debugText_ = nullptr;
 
 	uint32_t textureHandle_ = 0;
+	uint32_t enemyHandle_ = 0;
+
 	Model* model_ = nullptr;
 
 	ViewProjection viewProjection_;
@@ -64,6 +67,10 @@ class GameScene {
 
 	//自キャラ
 	Player* player_ = nullptr;
+
+	//敵
+	Enemy* enemy_ = nullptr;
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

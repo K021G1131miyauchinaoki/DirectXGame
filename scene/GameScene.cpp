@@ -35,6 +35,7 @@ GameScene::~GameScene() {
 	// delete debugCamera_;
 	//
 	delete player_;
+	delete enemy_;
 }
 
 void GameScene::Initialize() {
@@ -44,9 +45,16 @@ void GameScene::Initialize() {
 	audio_ = Audio::GetInstance();
 	debugText_ = DebugText::GetInstance();
 	textureHandle_ = TextureManager::Load("mario.jpg");
+	enemyHandle_ = TextureManager::Load("enemy.png");
+
 	model_ = Model::Create();
 	player_ = new Player();
 	player_->Initialize(model_, textureHandle_);
+	
+	
+	enemy_ = new Enemy();
+	enemy_->Initialize(model_, enemyHandle_);
+	
 
 #pragma region 乱数
 	////乱数シード生成器
@@ -66,7 +74,7 @@ void GameScene::Initialize() {
 #pragma endregion
 
 	//カメラ垂直方向視野角を設定
-	viewProjection_.fovAngleY = Radian_transform(30.0f);
+	viewProjection_.fovAngleY = Radian_transform(20.0f);
 	//アスペクト比
 	// viewProjection_.aspectRatio = 1.0f;
 	//ニアクリップ距離を設定
@@ -92,9 +100,8 @@ void GameScene::Update() {
 	debugText_->Printf(
 	  "eye:(%f,%f,%f)", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
 	// debugCamera_->Update();
-	player_->Rotate();
 	player_->Update();
-	
+	enemy_->Update();
 }
 
 void GameScene::Draw() {
@@ -125,7 +132,7 @@ void GameScene::Draw() {
 	/// </summary>
 	//描画
 	player_->Draw(viewProjection_);
-
+	enemy_->Draw(viewProjection_);
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 
