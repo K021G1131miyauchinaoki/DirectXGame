@@ -1,12 +1,17 @@
 #include "DebugText.h"
 #include "Model.h"
+#include "PayerBullet.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
-#include<assert.h>
-#include"PayerBullet.h"
-#include<memory>
-#include<list>
+#include <assert.h>
+#include <list>
+#include <memory>
 
+//行動フェーズ
+enum class Phase {
+	Approach, //接近する
+	Leave,    //離脱する
+};
 #pragma once
 class Enemy {
   public:
@@ -17,6 +22,9 @@ class Enemy {
 	//描画処理
 	void Draw(ViewProjection& viewProjection);
 
+	void Approach_move();
+	void Leave_move();
+
   private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
@@ -26,4 +34,6 @@ class Enemy {
 	uint32_t textureHandle_ = 0u;
 	//デバックテキスト
 	DebugText* debugText_ = nullptr;
+	//フェーズ
+	Phase phase_ = Phase::Approach;
 };
