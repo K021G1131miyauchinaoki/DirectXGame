@@ -1,8 +1,8 @@
-#include"PayerBullet.h"
-#include"Mat.h"
-#include<assert.h>
-void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vector3& velocity) { 
-	//NULLポインタチェック
+#include "Mat.h"
+#include "PayerBullet.h"
+#include <assert.h>
+void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vector3& velocity) {
+	// NULLポインタチェック
 	assert(model);
 	model_ = model;
 	velocity_ = velocity;
@@ -21,6 +21,11 @@ void PlayerBullet::Update() {
 
 	//行列の転送
 	worldTransform_.TransferMatrix();
+
+	//時間経過で消滅
+	if (--deathTimer <= 0) {
+		isDead_ = true;
+	}
 }
 
 void PlayerBullet::Draw(const ViewProjection& viewProjection) {

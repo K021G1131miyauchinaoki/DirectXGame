@@ -69,8 +69,9 @@ class GameScene {
 	Player* player_ = nullptr;
 
 	//敵
-	Enemy* enemy_ = nullptr;
-
+	std::unique_ptr<Enemy> enemy_;
+	//std::list<std::unique_ptr<Enemy>> enemy_;
+	//Enemy* enemy_ = nullptr;
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

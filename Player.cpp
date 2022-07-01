@@ -1,8 +1,6 @@
 #include "Player.h"
-#include"Mat.h"
+#include "Mat.h"
 #include <cassert>
-
-
 
 void Player::Initialize(Model* model, uint32_t textureHandle) {
 	assert(model);
@@ -16,13 +14,16 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 }
 
 void Player::Update() {
+	//ƒfƒXƒtƒ‰ƒO‚Ì—§‚Á‚½’e‚ğíœ
+	bullets_.remove_if([](std::unique_ptr<PlayerBullet>& bullet) { return bullet->IsDead(); });
+
 	//‰ñ“]
 	Rotate();
 	//ˆÚ“®
 	Vector3 move = {0, 0, 0};
-	
+
 	const float speed = 0.2f;
-	#pragma region ˆÚ“®ˆ—
+#pragma region ˆÚ“®ˆ—
 	if (input_->PushKey(DIK_UP)) {
 		move = {0, speed, 0};
 	} else if (input_->PushKey(DIK_DOWN)) {
@@ -32,7 +33,7 @@ void Player::Update() {
 	} else if (input_->PushKey(DIK_RIGHT)) {
 		move = {speed, 0, 0};
 	}
-	
+
 	worldTransform_.translation_ += move;
 	//ãŒÀA‰ºŒÀ‚Ìİ’è
 	const float kMoveLimitX = 14.0f;
@@ -41,24 +42,22 @@ void Player::Update() {
 	worldTransform_.translation_.x = min(worldTransform_.translation_.x, +kMoveLimitX);
 	worldTransform_.translation_.y = max(worldTransform_.translation_.y, -kMoveLimitY);
 	worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMoveLimitY);
-	
+
 	worldTransform_.matWorld_ = matIdentity();
 	worldTransform_.matWorld_ = Mat(worldTransform_);
 	//s—ñ‚Ì“]‘—
 	worldTransform_.TransferMatrix();
-	
+
 	debugText_->SetPos(50, 70);
 	debugText_->Printf(
 	  "Player:(%f,%f,%f)", worldTransform_.translation_.x, worldTransform_.translation_.y,
 	  worldTransform_.translation_.z);
-	
+
 #pragma endregion
 	Attack();
-	for (std::unique_ptr<PlayerBullet> & bullet : bullets_)
-	{
+	for (std::unique_ptr<PlayerBullet>& bullet : bullets_) {
 		bullet->Update();
 	}
-	
 }
 
 void Player::Attack() {
@@ -72,10 +71,10 @@ void Player::Attack() {
 
 		//’e‚ğ¶¬‚µA‰Šú‰»
 		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
-		newBullet->Initialize(model_, worldTransform_.translation_,velocity);
+		newBullet->Initialize(model_, worldTransform_.translation_, velocity);
 
 		//’e‚ğ“o˜^‚·‚é
-		bullets_.push_back(std::move(newBullet));	
+		bullets_.push_back(std::move(newBullet));
 	}
 }
 
@@ -93,8 +92,7 @@ void Player::Rotate() {
 
 void Player::Draw(ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
-	for (std::unique_ptr<PlayerBullet>&bullet:bullets_) {
+	for (std::unique_ptr<PlayerBullet>& bullet : bullets_) {
 		bullet->Draw(viewProjection);
 	}
-
 }
