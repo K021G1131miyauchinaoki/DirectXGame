@@ -1,6 +1,6 @@
 #include "DebugText.h"
 #include "Model.h"
-#include "PayerBullet.h"
+#include "EnemyBullet.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include <assert.h>
@@ -21,9 +21,12 @@ class Enemy {
 	void Update();
 	//描画処理
 	void Draw(ViewProjection& viewProjection);
-
+	//パターン処理
 	void Approach_move();
 	void Leave_move();
+
+	//弾の発射処理
+	void Fire();
 
   private:
 	//ワールド変換データ
@@ -36,4 +39,6 @@ class Enemy {
 	DebugText* debugText_ = nullptr;
 	//フェーズ
 	Phase phase_ = Phase::Approach;
+	//弾
+	std::list<std::unique_ptr<EnemyBullet>> bullets_;
 };

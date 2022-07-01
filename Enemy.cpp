@@ -8,6 +8,7 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 	this->model_ = model;
 	this->textureHandle_ = textureHandle;
 	debugText_ = DebugText::GetInstance();
+	Fire();
 
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = {0, 3.0f, 10.0f};
@@ -38,6 +39,22 @@ void Enemy::Update() {
 
 #pragma endregion
 	
+}
+
+void Enemy::Fire() {
+	//’e‚Ì‘¬“x
+	const float kBulletSpeed = 1.0f;
+	Vector3 velocity(0, 0, kBulletSpeed);
+
+	//‘¬“xƒxƒNƒgƒ‹‚ğ©‹@‚ÌŒü‚«‚É‡‚í‚¹‚Ä‰ñ“]‚³‚¹‚é
+	velocity = Vec_rot(velocity, worldTransform_.matWorld_);
+
+	//’e‚ğ¶¬‚µA‰Šú‰»
+	std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
+	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+
+	//’e‚ğ“o˜^‚·‚é
+	bullets_.push_back(std::move(newBullet));
 }
 
 void Enemy::Draw(ViewProjection& viewProjection) {
