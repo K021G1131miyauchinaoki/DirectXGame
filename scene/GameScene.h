@@ -3,10 +3,10 @@
 #include "DebugCamera.h"
 #include "DebugText.h"
 #include "DirectXCommon.h"
+#include "Enemy.h"
 #include "Input.h"
 #include "Model.h"
 #include "Player.h"
-#include"Enemy.h"
 #include "SafeDelete.h"
 #include "Sprite.h"
 #include "Vector3.h"
@@ -69,8 +69,9 @@ class GameScene {
 	Player* player_ = nullptr;
 
 	//敵
-	Enemy* enemy_ = nullptr;
-
+	std::unique_ptr<Enemy> enemy_;
+	// std::list<std::unique_ptr<Enemy>> enemy_;
+	// Enemy* enemy_ = nullptr;
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

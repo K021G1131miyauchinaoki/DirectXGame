@@ -35,7 +35,6 @@ GameScene::~GameScene() {
 	// delete debugCamera_;
 	//
 	delete player_;
-	delete enemy_;
 }
 
 void GameScene::Initialize() {
@@ -48,12 +47,14 @@ void GameScene::Initialize() {
 	enemyHandle_ = TextureManager::Load("enemy.png");
 
 	model_ = Model::Create();
+	//プレイヤー
 	player_ = new Player();
 	player_->Initialize(model_, textureHandle_);
-	
-	
-	enemy_ = new Enemy();
-	enemy_->Initialize(model_, enemyHandle_);
+	//敵
+	Enemy* newEnemy = new Enemy;
+	newEnemy->Initialize(model_, enemyHandle_);
+	//敵の登録
+	enemy_.reset(newEnemy);
 	
 
 #pragma region 乱数
