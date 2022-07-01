@@ -21,6 +21,11 @@ void PlayerBullet::Update() {
 
 	//s—ñ‚Ì“]‘—
 	worldTransform_.TransferMatrix();
+
+	//ŠÔŒo‰ß‚ÅÁ–Å
+	if (--deathTimer<=0) {
+		isDead_ = true;
+	}
 }
 
 void PlayerBullet::Draw(const ViewProjection& viewProjection) {
