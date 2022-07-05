@@ -15,12 +15,16 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 }
 
 void EnemyBullet::Update() {
-	worldTransform_.translation_ += velocity_;
+	worldTransform_.translation_ -= velocity_;
 	worldTransform_.matWorld_ = matIdentity();
 	worldTransform_.matWorld_ = Mat(worldTransform_);
 
 	//çsóÒÇÃì]ëó
 	worldTransform_.TransferMatrix();
+	//éûä‘åoâﬂÇ≈è¡ñ≈
+	if (--deathTimer <= 0) {
+		isDead_ = true;
+	}
 }
 
 void EnemyBullet::Draw(const ViewProjection& viewProjection) {

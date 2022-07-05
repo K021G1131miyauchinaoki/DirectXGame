@@ -28,6 +28,11 @@ class Enemy {
 	//弾の発射処理
 	void Fire();
 
+	void ApproachInitialize();
+
+	//発射間隔
+	static const int kFireInterval = 60;
+
   private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
@@ -41,4 +46,7 @@ class Enemy {
 	Phase phase_ = Phase::Approach;
 	//弾
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
+	//発射タイマー
+	 int32_t bullletTime=0;
+
 };

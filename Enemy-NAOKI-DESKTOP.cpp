@@ -8,15 +8,16 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 	this->model_ = model;
 	this->textureHandle_ = textureHandle;
 	debugText_ = DebugText::GetInstance();
-	ApproachInitialize();
+	Fire();
+	for (std::unique_ptr<EnemyBullet>& bullet : bullets_) {
+		bullet->Update();
+	}
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = {4.0f, 3.0f, 20.0f};
+	bullet_time = 10;
 }
 
 void Enemy::Update() {
-	//デスフラグの立った弾を削除
-	bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) { return bullet->IsDead(); });
-
 	switch (phase_) {
 	case Phase::Approach:
 	default:
@@ -47,7 +48,8 @@ void Enemy::Update() {
 }
 
 void Enemy::Fire() {
-	if (bullletTime-- < 0) {
+	if (bullet_time-- < 0) {
+
 		//弾の速度
 		const float kBulletSpeed = 1.0f;
 		Vector3 velocity(0, 0, kBulletSpeed);
@@ -62,19 +64,13 @@ void Enemy::Fire() {
 		//弾を登録する
 		bullets_.push_back(std::move(newBullet));
 
-		bullletTime = kFireInterval;
+		//タイマーの数値
+		bullet_time = 10;
 	}
 }
 
 void Enemy::Draw(ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
-	for (std::unique_ptr<EnemyBullet>& bullet : bullets_) {
-		bullet->Draw(viewProjection);
-	}
-}
-
-void Enemy::ApproachInitialize() {
-	bullletTime = kFireInterval; 
 }
 
 void Enemy::Approach_move() {
@@ -88,6 +84,6 @@ void Enemy::Approach_move() {
 }
 void Enemy::Leave_move() {
 	//移動
-	Vector3 move = {-0.2f, 0, -0.2f};
+	Vector3 move = {-0.2f, 0, -0.1f};
 	worldTransform_.translation_ += move;
 }
