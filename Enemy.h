@@ -6,6 +6,12 @@
 #include <assert.h>
 #include <list>
 #include <memory>
+#include"MathUtility.h"
+using namespace MathUtility;
+
+
+//自機クラスの前方前言
+class Player;
 
 //行動フェーズ
 enum class Phase {
@@ -33,6 +39,12 @@ class Enemy {
 	//発射間隔
 	static const int kFireInterval = 60;
 
+	//プレイヤーのセッター
+	void SetPlayer(Player* player) { player_ = player; }
+
+	//ワールド座標を取得
+	Vector3 GetWorldPosition();
+
   private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
@@ -47,6 +59,9 @@ class Enemy {
 	//弾
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
 	//発射タイマー
-	 int32_t bullletTime=0;
+	int32_t bullletTime=0;
+	//自キャラ
+	Player* player_ = nullptr;
+
 
 };

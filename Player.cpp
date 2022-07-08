@@ -2,8 +2,7 @@
 #include"Mat.h"
 #include <cassert>
 
-
-
+//初期化
 void Player::Initialize(Model* model, uint32_t textureHandle) {
 	assert(model);
 
@@ -15,6 +14,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	worldTransform_.Initialize();
 }
 
+//更新
 void Player::Update() {
 	//デスフラグの立った弾を削除
 	bullets_.remove_if([](std::unique_ptr<PlayerBullet>& bullet) { return bullet->IsDead(); });
@@ -63,6 +63,7 @@ void Player::Update() {
 	
 }
 
+//攻撃
 void Player::Attack() {
 	if (input_->PushKey(DIK_SPACE)) {
 		//弾の速度
@@ -80,7 +81,7 @@ void Player::Attack() {
 		bullets_.push_back(std::move(newBullet));	
 	}
 }
-
+//回転
 void Player::Rotate() {
 
 	const float kRot = 0.05f;
@@ -93,6 +94,20 @@ void Player::Rotate() {
 	worldTransform_.rotation_ += Rot;
 }
 
+//ワールド座標を渡す
+Vector3 Player::GetWorldPosition() { 
+	//座標を格納
+	Vector3 worldPos; 
+	//ワールド行列の平行移動成分を取得
+	worldPos.x = worldTransform_.translation_.x;
+	worldPos.y = worldTransform_.translation_.y;
+	worldPos.z = worldTransform_.translation_.z;
+
+	return worldPos;
+}
+
+
+//描画
 void Player::Draw(ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 	for (std::unique_ptr<PlayerBullet>&bullet:bullets_) {

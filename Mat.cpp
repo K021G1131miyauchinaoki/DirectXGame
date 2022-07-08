@@ -1,4 +1,5 @@
 #include "Mat.h"
+#include<cmath>//sqrt
 
 Matrix4 matIdentity() {
 	//íPà çsóÒ
@@ -98,4 +99,15 @@ Vector3 Vec_rot(Vector3 velocity, Matrix4 amount) {
 	Rot.z += velocity.z * amount.m[2][2];
 
 	return Rot;
+}
+
+float length(Vector3 vec) { return std::sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z); }
+
+Vector3& normaleize(Vector3 vec_) {
+	float len = length(vec_);
+	if (len != 0) {
+		return vec_ /= len;
+	}
+
+	return vec_;
 }

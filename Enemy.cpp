@@ -1,7 +1,10 @@
-#include "Mat.h"
 #include "Enemy.h"
+#include "Mat.h"
+#include "Player.h"
 #include <cassert>
 
+
+//初期化
 void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 	assert(model);
 
@@ -13,6 +16,7 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 	worldTransform_.translation_ = {4.0f, 3.0f, 20.0f};
 }
 
+//更新
 void Enemy::Update() {
 	//デスフラグの立った弾を削除
 	bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) { return bullet->IsDead(); });
@@ -27,8 +31,8 @@ void Enemy::Update() {
 
 		break;
 	}
-	
-	#pragma region 移動処理
+
+#pragma region 移動処理
 	worldTransform_.matWorld_ = matIdentity();
 	worldTransform_.matWorld_ = Mat(worldTransform_);
 	//行列の転送
@@ -46,15 +50,21 @@ void Enemy::Update() {
 	}
 }
 
+//弾発射
 void Enemy::Fire() {
+	assert(player_);
 	if (bullletTime-- < 0) {
 		//弾の速度
 		const float kBulletSpeed = 1.0f;
-		Vector3 velocity(0, 0, kBulletSpeed);
+		Vector3 velocity;
+		
+		Vector3 pPos = player_->GetWorldPosition();
+		Vector3 ePos = GetWorldPosition();
 
-		//速度ベクトルを自機の向きに合わせて回転させる
-		velocity = Vec_rot(velocity, worldTransform_.matWorld_);
+		Vector3 len = ePos-pPos;
+		velocity = normaleize(len);
 
+		len *= kBulletSpeed;
 		//弾を生成し、初期化
 		std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
 		newBullet->Initialize(model_, worldTransform_.translation_, velocity);
@@ -66,17 +76,10 @@ void Enemy::Fire() {
 	}
 }
 
-void Enemy::Draw(ViewProjection& viewProjection) {
-	model_->Draw(worldTransform_, viewProjection, textureHandle_);
-	for (std::unique_ptr<EnemyBullet>& bullet : bullets_) {
-		bullet->Draw(viewProjection);
-	}
-}
+//弾
+void Enemy::ApproachInitialize() { bullletTime = kFireInterval; }
 
-void Enemy::ApproachInitialize() {
-	bullletTime = kFireInterval; 
-}
-
+//行動パターン
 void Enemy::Approach_move() {
 	//移動
 	Vector3 move = {0, 0, -0.2f};
@@ -90,4 +93,24 @@ void Enemy::Leave_move() {
 	//移動
 	Vector3 move = {-0.2f, 0, -0.2f};
 	worldTransform_.translation_ += move;
+}
+
+//ワールド座標を渡す
+Vector3 Enemy::GetWorldPosition() {
+	//座標を格納
+	Vector3 worldPos;
+	//ワールド行列の平行移動成分を取得
+	worldPos.x = worldTransform_.translation_.x;
+	worldPos.y = worldTransform_.translation_.y;
+	worldPos.z = worldTransform_.translation_.z;
+
+	return worldPos;
+}
+
+//描画
+void Enemy::Draw(ViewProjection& viewProjection) {
+	model_->Draw(worldTransform_, viewProjection, textureHandle_);
+	for (std::unique_ptr<EnemyBullet>& bullet : bullets_) {
+		bullet->Draw(viewProjection);
+	}
 }

@@ -55,7 +55,8 @@ void GameScene::Initialize() {
 	newEnemy->Initialize(model_, enemyHandle_);
 	//敵の登録
 	enemy_.reset(newEnemy);
-	
+	//敵キャラに自キャラのアドレスを渡す
+	enemy_->SetPlayer(player_);
 
 #pragma region 乱数
 	////乱数シード生成器

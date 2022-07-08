@@ -24,6 +24,8 @@ class Player {
 	void Attack();
 	//回転処理
 	void Rotate();
+	//ワールド座標を取得
+	Vector3 GetWorldPosition();
 
   private:
 	//ワールド変換データ

@@ -13,3 +13,6 @@
     Matrix4 Mat(WorldTransform w);
 
 	Vector3 Vec_rot(Vector3 velocity, Matrix4 amount);
+
+	float length(Vector3	vec);
+    Vector3& normaleize(Vector3	vec_);
