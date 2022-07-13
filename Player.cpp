@@ -105,7 +105,8 @@ Vector3 Player::GetWorldPosition() {
 
 	return worldPos;
 }
-
+//è’ìÀÇµÇΩÇÁ
+void Player::OnCollision() {}
 
 //ï`âÊ
 void Player::Draw(ViewProjection& viewProjection) {

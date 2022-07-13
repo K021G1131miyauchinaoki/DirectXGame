@@ -26,6 +26,8 @@ class Player {
 	void Rotate();
 	//ワールド座標を取得
 	Vector3 GetWorldPosition();
+	//衝突を検出したら呼び出されるコールバック関数
+	void OnCollision();
 
   private:
 	//ワールド変換データ
@@ -40,4 +42,7 @@ class Player {
 	DebugText* debugText_ = nullptr;
 	//弾
 	std::list<std::unique_ptr<PlayerBullet>> bullets_;
+
+	//弾リストを取得
+	std::list<std::unique_ptr<PlayerBullet>>& GetBullets() { return bullets_; };
 };

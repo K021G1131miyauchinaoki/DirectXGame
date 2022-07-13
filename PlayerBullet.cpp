@@ -27,6 +27,9 @@ void PlayerBullet::Update() {
 	}
 }
 
+//Õ“Ë‚µ‚½‚ç
+void PlayerBullet::OnCollision() { isDead_ = true; }
+
 void PlayerBullet::Draw(const ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 }

@@ -106,6 +106,8 @@ Vector3 Enemy::GetWorldPosition() {
 
 	return worldPos;
 }
+//è’ìÀÇµÇΩÇÁ
+void Enemy::OnCollision() {}
 
 //ï`âÊ
 void Enemy::Draw(ViewProjection& viewProjection) {
