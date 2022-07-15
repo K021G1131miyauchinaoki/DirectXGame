@@ -27,6 +27,18 @@ void EnemyBullet::Update() {
 	}
 }
 
+//ワールド座標を渡す
+Vector3 EnemyBullet::GetBulletPosition() {
+	//座標を格納
+	Vector3 worldPos;
+	//ワールド行列の平行移動成分を取得
+	worldPos.x = worldTransform_.translation_.x;
+	worldPos.y = worldTransform_.translation_.y;
+	worldPos.z = worldTransform_.translation_.z;
+
+	return worldPos;
+}
+
 //衝突したら
 void EnemyBullet::OnCollision() { isDead_ = true; }
 

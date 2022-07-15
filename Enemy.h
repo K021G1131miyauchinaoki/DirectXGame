@@ -47,6 +47,13 @@ class Enemy {
 
 	//衝突を検出したら呼び出されるコールバック関数
 	void OnCollision();
+	//弾
+	std::list<std::unique_ptr<EnemyBullet>> bullets_;
+	//弾リストを取得
+	std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets_; };
+
+	//半径を取得
+	float GetRadius() { return r; }
 
   private:
 	//ワールド変換データ
@@ -59,12 +66,11 @@ class Enemy {
 	DebugText* debugText_ = nullptr;
 	//フェーズ
 	Phase phase_ = Phase::Approach;
-	//弾
-	std::list<std::unique_ptr<EnemyBullet>> bullets_;
 	//発射タイマー
 	int32_t bullletTime=0;
 	//自キャラ
 	Player* player_ = nullptr;
 
-
+	//半径
+	const float r = 1.0f;
 };

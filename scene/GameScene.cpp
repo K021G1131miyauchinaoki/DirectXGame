@@ -5,6 +5,7 @@
 #include "Vector3.h"
 #include <cassert>
 #include <random>
+#include"Mat.h"
 #define PI (3.14f)
 
 //ラジアン変換
@@ -104,7 +105,86 @@ void GameScene::Update() {
 	// debugCamera_->Update();
 	player_->Update();
 	enemy_->Update();
+	CheckAllCollision();
 }
+
+void GameScene::CheckAllCollision() {
+	//判定対象AとBの座標
+	Vector3 posA, posB;
+
+	//自弾リストを取得
+	const std::list<std::unique_ptr<PlayerBullet>>& playerBullets = player_->GetBullets();
+	//敵弾リストを取得
+	const std::list<std::unique_ptr<EnemyBullet>>& enemyBullets = enemy_->GetBullets();
+	#pragma	region	自キャラと敵弾の当たり判定
+	//自キャラの座標
+	posA = player_->GetWorldPosition();
+	//自キャラと敵弾全ての当たり判定
+	for (const std::unique_ptr<EnemyBullet>&e_bullet:enemyBullets) {
+		//敵弾の座標
+		posB = e_bullet->GetBulletPosition();
+		//A,Bの距離
+		Vector3 vecPos = lens(posA, posB);
+		float dis = length(vecPos);
+		//
+		float	radius =player_->GetRadius() + e_bullet->GetRadius();
+		//判定
+		if(dis<=radius) {
+			//自キャラのコールバックを呼び出し
+			player_->OnCollision();
+			//敵弾のコールバックを呼び出し
+			e_bullet->OnCollision();
+		}
+	}
+	#pragma	endregion
+
+	#pragma region 自弾と敵キャラの当たり判定
+	//敵弾の座標
+	posA = enemy_->GetWorldPosition();
+	//自キャラと敵弾全ての当たり判定
+	for (const std::unique_ptr<PlayerBullet>& p_bullet : playerBullets) {
+		//自弾の座標
+		posB = p_bullet->GetBulletPosition();
+		// A,Bの距離
+		Vector3 vecPos = lens(posA, posB);
+		float dis = length(vecPos);
+		//
+		float radius = enemy_->GetRadius() + p_bullet->GetRadius();
+		//判定
+		if (dis <= radius) {
+			//敵キャラのコールバックを呼び出し
+			enemy_->OnCollision();
+			//自弾のコールバックを呼び出し
+			p_bullet->OnCollision();
+		}
+	}
+	#pragma endregion
+
+	#pragma region 自弾と敵弾の当たり判定
+	//自弾の座標
+	for (const std::unique_ptr<PlayerBullet>& p_bullet : playerBullets) {
+		posA = p_bullet->GetBulletPosition();
+		//自キャラと敵弾全ての当たり判定
+		for (const std::unique_ptr<EnemyBullet>& e_bullet : enemyBullets) {
+			//敵弾の座標
+			posB = e_bullet->GetBulletPosition();
+			// A,Bの距離
+			Vector3 vecPos = lens(posA, posB);
+			float dis = length(vecPos);
+			//
+			float radius = enemy_->GetRadius() + p_bullet->GetRadius();
+			//判定
+			if (dis <= radius) {
+				//自弾のコールバックを呼び出し
+				p_bullet->OnCollision();
+				//敵弾のコールバックを呼び出し
+				e_bullet->OnCollision();
+			}
+		}
+	}
+	#pragma endregion
+}
+
 
 void GameScene::Draw() {
 

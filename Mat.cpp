@@ -101,6 +101,11 @@ Vector3 Vec_rot(Vector3 velocity, Matrix4 amount) {
 	return Rot;
 }
 
+Vector3 lens(Vector3 vec1, Vector3 vec2) { 
+	Vector3 vec = vec1 -= vec2;
+	return vec; 
+}
+
 float length(Vector3 vec) { return std::sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z); }
 
 Vector3& normaleize(Vector3 vec_) {

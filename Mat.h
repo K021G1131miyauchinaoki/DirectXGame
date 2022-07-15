@@ -14,5 +14,6 @@
 
 	Vector3 Vec_rot(Vector3 velocity, Matrix4 amount);
 
+	Vector3 lens(Vector3 vec1, Vector3 vec2);
 	float length(Vector3	vec);
     Vector3& normaleize(Vector3	vec_);

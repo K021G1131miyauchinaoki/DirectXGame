@@ -13,7 +13,7 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 	debugText_ = DebugText::GetInstance();
 	ApproachInitialize();
 	worldTransform_.Initialize();
-	worldTransform_.translation_ = {4.0f, 3.0f, 20.0f};
+	worldTransform_.translation_ = {4.0f, 3.0f, 50.0f};
 }
 
 //çXêV
@@ -106,6 +106,7 @@ Vector3 Enemy::GetWorldPosition() {
 
 	return worldPos;
 }
+
 //è’ìÀÇµÇΩÇÁ
 void Enemy::OnCollision() {}
 
