@@ -13,6 +13,7 @@
 #include "Vector4.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include"Skydome.h"
 
 /// <summary>
 /// ゲームシーン
@@ -77,6 +78,12 @@ class GameScene {
 	std::unique_ptr<Enemy> enemy_;
 	// std::list<std::unique_ptr<Enemy>> enemy_;
 	// Enemy* enemy_ = nullptr;
+
+	//天球
+	Skydome* skydome_=nullptr;
+	//3Dモデル
+	Model* modelSkydome_ = nullptr;
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

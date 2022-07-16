@@ -33,9 +33,11 @@ GameScene::GameScene() {}
 GameScene::~GameScene() {
 	delete model_;
 	//
-	// delete debugCamera_;
+	 delete debugCamera_;
 	//
 	delete player_;
+
+	delete modelSkydome_;
 }
 
 void GameScene::Initialize() {
@@ -58,7 +60,12 @@ void GameScene::Initialize() {
 	enemy_.reset(newEnemy);
 	//敵キャラに自キャラのアドレスを渡す
 	enemy_->SetPlayer(player_);
-
+	//3Dモデル生成
+	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
+	
+	skydome_ = new Skydome();
+	skydome_->Initialize(modelSkydome_);
+	
 #pragma region 乱数
 	////乱数シード生成器
 	// std::random_device seed_gen;
@@ -86,7 +93,7 @@ void GameScene::Initialize() {
 	// viewProjection_.farZ = 53.0f;
 
 	viewProjection_.Initialize();
-	// debugCamera_ = new DebugCamera(1280, 720);
+	debugCamera_ = new DebugCamera(1280, 720);
 
 	//軸方向表示の表示を有効にする
 	AxisIndicator::GetInstance()->SetVisible(true);
@@ -94,17 +101,65 @@ void GameScene::Initialize() {
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 
 	//ライン描画が参照するビュープロジェクションを指定する
-	// PrimitiveDrawer::GetInstance()->SetViewProjection(&debugCamera_->GetViewProjection());
+	PrimitiveDrawer::GetInstance()->SetViewProjection(&debugCamera_->GetViewProjection());
 }
 
 void GameScene::Update() {
+
 	//デバック用表示
 	debugText_->SetPos(50, 50);
 	debugText_->Printf(
 	  "eye:(%f,%f,%f)", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
-	// debugCamera_->Update();
+	debugCamera_->Update();
+#pragma region 視点移動処理
+	{
+		//視点の移動ベクトル
+		Vector3 move = {0, 0, 0};
+
+		//視点の移動の速さ
+		const float kEyeSpeed = 1.0f;
+
+		//押した方向で移動ベクトルを変更
+		if (input_->PushKey(DIK_W)) {
+			move = {0, 0, kEyeSpeed};
+		} else if (input_->PushKey(DIK_S)) {
+			move = {0, 0, -kEyeSpeed};
+		}
+		//視点移動（ベクトルの加算）
+		viewProjection_.eye += move;
+
+		//行列の再計算
+		viewProjection_.UpdateMatrix();
+	}
+#pragma endregion
+
+#pragma region 注視点移動処理
+	{
+		//視点の移動ベクトル
+		Vector3 move = {0, 0, 0};
+
+		//視点の移動の速さ
+		const float kTargetSpeed = 1.0f;
+
+		//押した方向で移動ベクトルを変更
+		if (input_->PushKey(DIK_A)) {
+			move = {-kTargetSpeed, 0, 0};
+		} else if (input_->PushKey(DIK_D)) {
+			move = {kTargetSpeed, 0, 0};
+		}
+		//視点移動（ベクトルの加算）
+		viewProjection_.target += move;
+
+		//行列の再計算
+		viewProjection_.UpdateMatrix();
+	}
+#pragma endregion
+	//行列の再計算
+	viewProjection_.UpdateMatrix();
+
 	player_->Update();
 	enemy_->Update();
+	skydome_->Update();
 	CheckAllCollision();
 }
 
@@ -215,6 +270,7 @@ void GameScene::Draw() {
 	//描画
 	player_->Draw(viewProjection_);
 	enemy_->Draw(viewProjection_);
+	skydome_->Draw(viewProjection_);
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 
