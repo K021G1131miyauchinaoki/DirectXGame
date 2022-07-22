@@ -20,7 +20,9 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 void Enemy::Update() {
 	//デスフラグの立った弾を削除
 	bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) { return bullet->IsDead(); });
-
+	for (std::unique_ptr<EnemyBullet>& bullet : bullets_) {
+		bullet->Update();
+	}
 	switch (phase_) {
 	case Phase::Approach:
 	default:
@@ -44,10 +46,7 @@ void Enemy::Update() {
 	  worldTransform_.translation_.z);
 
 #pragma endregion
-	Fire();
-	for (std::unique_ptr<EnemyBullet>& bullet : bullets_) {
-		bullet->Update();
-	}
+	
 }
 
 //弾発射
@@ -84,6 +83,9 @@ void Enemy::Approach_move() {
 	//移動
 	Vector3 move = {0, 0, -0.2f};
 	worldTransform_.translation_ += move;
+
+	Fire();
+	
 	//一定の位置に達したら離脱
 	if (worldTransform_.translation_.z < 0.0f) {
 		phase_ = Phase::Leave;

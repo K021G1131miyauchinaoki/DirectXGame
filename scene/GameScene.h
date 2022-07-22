@@ -7,6 +7,7 @@
 #include "Input.h"
 #include "Model.h"
 #include "Player.h"
+#include"RailCamera.h"
 #include "SafeDelete.h"
 #include "Sprite.h"
 #include "Vector3.h"
@@ -84,6 +85,7 @@ class GameScene {
 	//3Dモデル
 	Model* modelSkydome_ = nullptr;
 
+	std::unique_ptr<RailCamera> railCamera_;
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
