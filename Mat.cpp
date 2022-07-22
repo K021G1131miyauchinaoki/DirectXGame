@@ -108,6 +108,7 @@ Vector3 lens(Vector3 vec1, Vector3 vec2) {
 
 float length(Vector3 vec) { return std::sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z); }
 
+
 Vector3& normaleize(Vector3 vec_) {
 	float len = length(vec_);
 	if (len != 0) {
