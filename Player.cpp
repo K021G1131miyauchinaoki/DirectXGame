@@ -1,6 +1,6 @@
 #include "Player.h"
-#include"Mat.h"
-#include"RailCamera.h"
+#include "Mat.h"
+#include "RailCamera.h"
 #include <cassert>
 
 //初期化
@@ -12,23 +12,23 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	input_ = Input::GetInstance();
 	debugText_ = DebugText::GetInstance();
 
-	worldTransform_.translation_ = {0,0,24};
+	worldTransform_.translation_ = {0, 0, 24};
 	worldTransform_.Initialize();
-	//worldTransform_.parent_ = &railCamera_->GetWorldMatrix();
+	// worldTransform_.parent_ = &railCamera_->GetWorldMatrix();
 }
 
 //更新
 void Player::Update() {
-	//assert(railCamera_);
+	// assert(railCamera_);
 	//デスフラグの立った弾を削除
 	bullets_.remove_if([](std::unique_ptr<PlayerBullet>& bullet) { return bullet->IsDead(); });
 	//回転
 	Rotate();
 	//移動
 	Vector3 move = {0, 0, 0};
-	
+
 	const float speed = 0.2f;
-	#pragma region 移動処理
+#pragma region 移動処理
 	if (input_->PushKey(DIK_UP)) {
 		move = {0, speed, 0};
 	} else if (input_->PushKey(DIK_DOWN)) {
@@ -38,7 +38,7 @@ void Player::Update() {
 	} else if (input_->PushKey(DIK_RIGHT)) {
 		move = {speed, 0, 0};
 	}
-	
+
 	worldTransform_.translation_ += move;
 	//上限、下限の設定
 	const float kMoveLimitX = 14.0f;
@@ -47,25 +47,23 @@ void Player::Update() {
 	worldTransform_.translation_.x = min(worldTransform_.translation_.x, +kMoveLimitX);
 	worldTransform_.translation_.y = max(worldTransform_.translation_.y, -kMoveLimitY);
 	worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMoveLimitY);
-	
+
 	worldTransform_.matWorld_ = matIdentity();
 	worldTransform_.matWorld_ = Mat(worldTransform_);
 	worldTransform_.matWorld_ *= worldTransform_.parent_->matWorld_;
 	//行列の転送
 	worldTransform_.TransferMatrix();
-	
+
 	debugText_->SetPos(50, 70);
 	debugText_->Printf(
 	  "Player:(%f,%f,%f)", worldTransform_.translation_.x, worldTransform_.translation_.y,
 	  worldTransform_.translation_.z);
-	
+
 #pragma endregion
 	Attack();
-	for (std::unique_ptr<PlayerBullet> & bullet : bullets_)
-	{
+	for (std::unique_ptr<PlayerBullet>& bullet : bullets_) {
 		bullet->Update();
 	}
-	
 }
 
 //攻撃
@@ -80,11 +78,11 @@ void Player::Attack() {
 
 		//弾を生成し、初期化
 		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
-		newBullet->Initialize(model_, worldTransform_.translation_,velocity);
+		newBullet->Initialize(model_, worldTransform_.translation_, velocity);
 
 		//弾を登録する
 		bullets_.push_back(std::move(newBullet));
-		
+
 		//タイマーリセット
 		bullletTime = kFireInterval;
 	}
@@ -103,9 +101,9 @@ void Player::Rotate() {
 }
 
 //ワールド座標を渡す
-Vector3 Player::GetWorldPosition() { 
+Vector3 Player::GetWorldPosition() {
 	//座標を格納
-	Vector3 worldPos; 
+	Vector3 worldPos;
 	//ワールド行列の平行移動成分を取得
 	worldPos.x = worldTransform_.translation_.x;
 	worldPos.y = worldTransform_.translation_.y;
@@ -119,8 +117,7 @@ void Player::OnCollision() {}
 //描画
 void Player::Draw(ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
-	for (std::unique_ptr<PlayerBullet>&bullet:bullets_) {
+	for (std::unique_ptr<PlayerBullet>& bullet : bullets_) {
 		bullet->Draw(viewProjection);
 	}
-
 }

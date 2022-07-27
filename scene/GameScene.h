@@ -7,14 +7,14 @@
 #include "Input.h"
 #include "Model.h"
 #include "Player.h"
-#include"RailCamera.h"
+#include "RailCamera.h"
 #include "SafeDelete.h"
+#include "Skydome.h"
 #include "Sprite.h"
 #include "Vector3.h"
 #include "Vector4.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
-#include"Skydome.h"
 
 /// <summary>
 /// ゲームシーン
@@ -81,8 +81,8 @@ class GameScene {
 	// Enemy* enemy_ = nullptr;
 
 	//天球
-	Skydome* skydome_=nullptr;
-	//3Dモデル
+	Skydome* skydome_ = nullptr;
+	// 3Dモデル
 	Model* modelSkydome_ = nullptr;
 
 	std::unique_ptr<RailCamera> railCamera_;

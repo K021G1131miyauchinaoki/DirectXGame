@@ -1,12 +1,12 @@
 #include "DebugText.h"
 #include "Input.h"
 #include "Model.h"
+#include "PayerBullet.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
-#include<assert.h>
-#include"PayerBullet.h"
-#include<memory>
-#include<list>
+#include <assert.h>
+#include <list>
+#include <memory>
 #pragma once
 
 //カメラクラス
@@ -19,39 +19,40 @@ class Player {
   public:
 	//初期化
 	void Initialize(Model* model, uint32_t textureHandle);
-	
+
 	//更新処理
 	void Update();
-	
+
 	//描画処理
 	void Draw(ViewProjection& viewProjection);
-	
+
 	//撃つ処理
 	void Attack();
-	
+
 	//発射間隔
 	static const int kFireInterval = 60;
-	
+
 	//回転処理
 	void Rotate();
-	
+
 	//ワールド座標を取得
 	Vector3 GetWorldPosition();
-	
+
 	//衝突を検出したら呼び出されるコールバック関数
 	void OnCollision();
-	
+
 	//弾
 	std::list<std::unique_ptr<PlayerBullet>> bullets_;
-	
+
 	//弾リストを取得
 	std::list<std::unique_ptr<PlayerBullet>>& GetBullets() { return bullets_; };
-	
+
 	//半径を取得
 	float GetRadius() { return r; }
 
 	//カメラセッター
 	void SetParent(const WorldTransform* parent) { worldTransform_.parent_ = parent; }
+
   private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;

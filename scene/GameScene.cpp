@@ -1,11 +1,11 @@
 ﻿#include "GameScene.h"
 #include "AxisIndicator.h"
+#include "Mat.h"
 #include "PrimitiveDrawer.h"
 #include "TextureManager.h"
 #include "Vector3.h"
 #include <cassert>
 #include <random>
-#include"Mat.h"
 #define PI (3.14f)
 
 //ラジアン変換
@@ -33,7 +33,7 @@ GameScene::GameScene() {}
 GameScene::~GameScene() {
 	delete model_;
 	//
-	 //delete debugCamera_;
+	// delete debugCamera_;
 	//
 	delete player_;
 
@@ -63,7 +63,7 @@ void GameScene::Initialize() {
 	enemy_->SetPlayer(player_);
 
 	//天球
-	//3Dモデル生成
+	// 3Dモデル生成
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 	skydome_ = new Skydome();
 	skydome_->Initialize(modelSkydome_);
@@ -72,7 +72,7 @@ void GameScene::Initialize() {
 	//レールカメラ
 	railCamera_->Initialize(Vector3(0, 0, -50), Vector3(0, 0, 0));
 	player_->SetParent(&railCamera_->GetWorldTransform());
-	
+
 #pragma region 乱数
 	////乱数シード生成器
 	// std::random_device seed_gen;
@@ -100,7 +100,7 @@ void GameScene::Initialize() {
 	// viewProjection_.farZ = 53.0f;
 
 	viewProjection_.Initialize();
-	//debugCamera_ = new DebugCamera(1280, 720);
+	// debugCamera_ = new DebugCamera(1280, 720);
 
 	//軸方向表示の表示を有効にする
 	AxisIndicator::GetInstance()->SetVisible(true);
@@ -108,11 +108,11 @@ void GameScene::Initialize() {
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 
 	//ライン描画が参照するビュープロジェクションを指定する
-	//PrimitiveDrawer::GetInstance()->SetViewProjection(&debugCamera_->GetViewProjection());
+	// PrimitiveDrawer::GetInstance()->SetViewProjection(&debugCamera_->GetViewProjection());
 }
 
 void GameScene::Update() {
-	//debugCamera_->Update();
+	// debugCamera_->Update();
 	railCamera_->Update();
 
 	viewProjection_.matView = railCamera_->GetViewProjection().matView;
@@ -124,7 +124,6 @@ void GameScene::Update() {
 	enemy_->Update();
 	skydome_->Update();
 	CheckAllCollision();
-
 }
 
 void GameScene::CheckAllCollision() {
@@ -135,29 +134,29 @@ void GameScene::CheckAllCollision() {
 	const std::list<std::unique_ptr<PlayerBullet>>& playerBullets = player_->GetBullets();
 	//敵弾リストを取得
 	const std::list<std::unique_ptr<EnemyBullet>>& enemyBullets = enemy_->GetBullets();
-	#pragma	region	自キャラと敵弾の当たり判定
+#pragma region 自キャラと敵弾の当たり判定
 	//自キャラの座標
 	posA = player_->GetWorldPosition();
 	//自キャラと敵弾全ての当たり判定
-	for (const std::unique_ptr<EnemyBullet>&e_bullet:enemyBullets) {
+	for (const std::unique_ptr<EnemyBullet>& e_bullet : enemyBullets) {
 		//敵弾の座標
 		posB = e_bullet->GetBulletPosition();
-		//A,Bの距離
+		// A,Bの距離
 		Vector3 vecPos = lens(posA, posB);
 		float dis = length(vecPos);
 		//
-		float	radius =player_->GetRadius() + e_bullet->GetRadius();
+		float radius = player_->GetRadius() + e_bullet->GetRadius();
 		//判定
-		if(dis<=radius) {
+		if (dis <= radius) {
 			//自キャラのコールバックを呼び出し
 			player_->OnCollision();
 			//敵弾のコールバックを呼び出し
 			e_bullet->OnCollision();
 		}
 	}
-	#pragma	endregion
+#pragma endregion
 
-	#pragma region 自弾と敵キャラの当たり判定
+#pragma region 自弾と敵キャラの当たり判定
 	//敵弾の座標
 	posA = enemy_->GetWorldPosition();
 	//自キャラと敵弾全ての当たり判定
@@ -177,9 +176,9 @@ void GameScene::CheckAllCollision() {
 			p_bullet->OnCollision();
 		}
 	}
-	#pragma endregion
+#pragma endregion
 
-	#pragma region 自弾と敵弾の当たり判定
+#pragma region 自弾と敵弾の当たり判定
 	//自弾の座標
 	for (const std::unique_ptr<PlayerBullet>& p_bullet : playerBullets) {
 		posA = p_bullet->GetBulletPosition();
@@ -201,9 +200,8 @@ void GameScene::CheckAllCollision() {
 			}
 		}
 	}
-	#pragma endregion
+#pragma endregion
 }
-
 
 void GameScene::Draw() {
 
