@@ -53,6 +53,7 @@ void GameScene::Initialize() {
 	//プレイヤー
 	player_ = new Player();
 	player_->Initialize(model_, textureHandle_);
+
 	//敵
 	Enemy* newEnemy = new Enemy;
 	newEnemy->Initialize(model_, enemyHandle_);
@@ -60,13 +61,17 @@ void GameScene::Initialize() {
 	enemy_.reset(newEnemy);
 	//敵キャラに自キャラのアドレスを渡す
 	enemy_->SetPlayer(player_);
+
+	//天球
 	//3Dモデル生成
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
-	
 	skydome_ = new Skydome();
 	skydome_->Initialize(modelSkydome_);
 	railCamera_ = std::make_unique<RailCamera>();
+
+	//レールカメラ
 	railCamera_->Initialize(Vector3(0, 0, -50), Vector3(0, 0, 0));
+	player_->SetParent(&railCamera_->GetWorldTransform());
 	
 #pragma region 乱数
 	////乱数シード生成器

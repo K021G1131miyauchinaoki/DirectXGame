@@ -27,7 +27,9 @@ class RailCamera {
 	const ViewProjection& GetViewProjection() { return viewProjection_; }
 
 	//ワールド行列を取得
-	const WorldTransform& GetWorldMatrix() const { return worldTransform_; }
+	Matrix4 GetWorldMatrix() const { return worldTransform_.matWorld_; }
+
+	WorldTransform &GetWorldTransform() { return worldTransform_; }
 
   private:
 	//ワールド変換データ

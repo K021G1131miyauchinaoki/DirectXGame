@@ -1,5 +1,6 @@
 #include "Player.h"
 #include"Mat.h"
+#include"RailCamera.h"
 #include <cassert>
 
 //初期化
@@ -11,11 +12,14 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	input_ = Input::GetInstance();
 	debugText_ = DebugText::GetInstance();
 
+	worldTransform_.translation_ = {0,0,24};
 	worldTransform_.Initialize();
+	//worldTransform_.parent_ = &railCamera_->GetWorldMatrix();
 }
 
 //更新
 void Player::Update() {
+	//assert(railCamera_);
 	//デスフラグの立った弾を削除
 	bullets_.remove_if([](std::unique_ptr<PlayerBullet>& bullet) { return bullet->IsDead(); });
 	//回転
@@ -46,6 +50,7 @@ void Player::Update() {
 	
 	worldTransform_.matWorld_ = matIdentity();
 	worldTransform_.matWorld_ = Mat(worldTransform_);
+	worldTransform_.matWorld_ *= worldTransform_.parent_->matWorld_;
 	//行列の転送
 	worldTransform_.TransferMatrix();
 	
