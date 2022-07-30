@@ -72,5 +72,4 @@ class Player {
 	//ƒJƒƒ‰ƒNƒ‰ƒX
 	RailCamera* railCamera_ = nullptr;
 
-	WorldTransform cameraTransform;
 };

@@ -4,7 +4,7 @@
 #pragma once
 class PlayerBullet {
   public:
-	void Initialize(Model* model, const Vector3& position, const Vector3&	veclocity);
+	void Initialize(Model* model, const Matrix4& position, const Vector3&	veclocity);
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 	bool IsDead() const { return isDead_; }
@@ -29,5 +29,5 @@ class PlayerBullet {
 	bool isDead_ = false;
 
 	//”¼Œa
-	const float r = 1.0f;
+	const float r = 0.5f;
 };

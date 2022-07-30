@@ -20,9 +20,7 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 void Enemy::Update() {
 	//デスフラグの立った弾を削除
 	bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) { return bullet->IsDead(); });
-	for (std::unique_ptr<EnemyBullet>& bullet : bullets_) {
-		bullet->Update();
-	}
+	
 	switch (phase_) {
 	case Phase::Approach:
 	default:
@@ -44,9 +42,11 @@ void Enemy::Update() {
 	debugText_->Printf(
 	  "Enemy:(%f,%f,%f)", worldTransform_.translation_.x, worldTransform_.translation_.y,
 	  worldTransform_.translation_.z);
-
 #pragma endregion
-	
+	for (std::unique_ptr<EnemyBullet>& bullet : bullets_) {
+		bullet->Update();
+	}
+
 }
 
 //弾発射
@@ -54,7 +54,7 @@ void Enemy::Fire() {
 	assert(player_);
 	if (bullletTime-- < 0) {
 		//弾の速度
-		const float kBulletSpeed = 1.0f;
+		const float kBulletSpeed = 0.5f;
 		Vector3 velocity;
 		
 		Vector3 pPos = player_->GetWorldPosition();
@@ -102,9 +102,9 @@ Vector3 Enemy::GetWorldPosition() {
 	//座標を格納
 	Vector3 worldPos;
 	//ワールド行列の平行移動成分を取得
-	worldPos.x = worldTransform_.translation_.x;
-	worldPos.y = worldTransform_.translation_.y;
-	worldPos.z = worldTransform_.translation_.z;
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
 
 	return worldPos;
 }

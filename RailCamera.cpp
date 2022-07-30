@@ -37,8 +37,7 @@ void RailCamera::Update() {
 	//ワールド上方ベクトル
 	Vector3 up(0, 1, 0);
 	//レールカメラの回転を反映
-	up = Vector3Transform(up, worldTransform_.matWorld_);
-	viewProjection_.up += up;
+	viewProjection_.up = Vector3Transform(up, worldTransform_.matWorld_);
 
 	//ビュープロジェクションの更新
 	viewProjection_.UpdateMatrix();

@@ -1,7 +1,7 @@
 #include"PayerBullet.h"
 #include"Mat.h"
 #include<assert.h>
-void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vector3& velocity) { 
+void PlayerBullet::Initialize(Model* model, const Matrix4& position, const Vector3& velocity) { 
 	//NULLポインタチェック
 	assert(model);
 	model_ = model;
@@ -11,7 +11,9 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vecto
 	//ワールドトランスフォームの初期化
 	worldTransform_.Initialize();
 	//引数で受け取って初期座標をセット
-	worldTransform_.translation_ = position;
+	worldTransform_.translation_.x = position.m[3][0];
+	worldTransform_.translation_.y = position.m[3][1];
+	worldTransform_.translation_.z = position.m[3][2];
 }
 
 void PlayerBullet::Update() {

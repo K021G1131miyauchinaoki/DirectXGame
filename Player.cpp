@@ -78,7 +78,7 @@ void Player::Attack() {
 
 		//’e‚ğ¶¬‚µA‰Šú‰»
 		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
-		newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+		newBullet->Initialize(model_, worldTransform_.matWorld_, velocity);
 
 		//’e‚ğ“o˜^‚·‚é
 		bullets_.push_back(std::move(newBullet));
@@ -105,9 +105,10 @@ Vector3 Player::GetWorldPosition() {
 	//À•W‚ğŠi”[
 	Vector3 worldPos;
 	//ƒ[ƒ‹ƒhs—ñ‚Ì•½sˆÚ“®¬•ª‚ğæ“¾
-	worldPos.x = worldTransform_.translation_.x;
-	worldPos.y = worldTransform_.translation_.y;
-	worldPos.z = worldTransform_.translation_.z;
+	//worldTransform_.matWorld_.m;
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
 
 	return worldPos;
 }
