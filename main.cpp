@@ -85,10 +85,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		primitiveDrawer->Reset();
 		// 描画終了
 		dxCommon->PostDraw();
-		//ウインドウ終了
-		if (input->PushKey(DIK_ESCAPE)) {
-			break;
-		}
 	}
 
 	// 各種解放

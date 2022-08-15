@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cstdint>
+#include <mutex>
 #include <set>
 #include <string>
 #include <unordered_map>
@@ -142,4 +143,5 @@ class Audio {
 	uint32_t indexVoice_ = 0u;
 	// オーディオコールバック
 	XAudio2VoiceCallback voiceCallback_;
+	std::mutex voiceMutex_;
 };
