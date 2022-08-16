@@ -9,6 +9,8 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include<memory>
+#include<Player.h>
 
 /// <summary>
 /// ゲームシーン
@@ -50,4 +52,14 @@ class GameScene {
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
+	/// 
+	
+	ViewProjection viewProjection_;
+
+
+	Model* model_ = nullptr;
+	uint32_t textureHandle_ = 0;
+	//std::unique_ptr<Player> player;
+	//自キャラ
+	Player* player_ = nullptr;
 };
