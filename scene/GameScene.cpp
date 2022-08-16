@@ -8,6 +8,7 @@
 #include"Mat.h"
 #define PI (3.14f)
 
+
 //ラジアン変換
 float Radian_transform(float degree) {
 	float radian = degree * (PI / 180.0f);
