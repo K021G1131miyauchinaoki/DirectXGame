@@ -28,16 +28,26 @@ void Player::Update() {
 	} 
 	if (input_->PushKey(DIK_LEFT)) {
 		move = {-speed, 0, 0};
+		if (input_->PushKey(DIK_UP)) {
+			move = {-speed, speed, 0};
+		} else if (input_->PushKey(DIK_DOWN)) {
+			move = {-speed, -speed, 0};
+		}
 	} else if (input_->PushKey(DIK_RIGHT)) {
 		move = {speed, 0, 0};
+		if (input_->PushKey(DIK_UP)) {
+			move = {speed, speed, 0};
+		} else if (input_->PushKey(DIK_DOWN)) {
+			move = {speed, -speed, 0};
+		}
 	}
 
 	worldTransform_.translation_ += move;
-	////è„å¿ÅAâ∫å¿ÇÃê›íË
-	// const float kMoveLimitX = 14.0f;
+	//è„å¿ÅAâ∫å¿ÇÃê›íË
+	const float kMoveLimitX = 14.0f;
 	// const float kMoveLimitY = 8.0f;
-	// worldTransform_.translation_.x = max(worldTransform_.translation_.x, -kMoveLimitX);
-	// worldTransform_.translation_.x = min(worldTransform_.translation_.x, +kMoveLimitX);
+	 worldTransform_.translation_.x = max(worldTransform_.translation_.x, -kMoveLimitX);
+	 worldTransform_.translation_.x = min(worldTransform_.translation_.x, +kMoveLimitX);
 	// worldTransform_.translation_.y = max(worldTransform_.translation_.y, -kMoveLimitY);
 	// worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMoveLimitY);
 
