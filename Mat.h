@@ -12,7 +12,7 @@ Matrix4 Mat_rot(WorldTransform& w);
 //çáê¨
 Matrix4 Mat(WorldTransform w);
 
-Vector3 Vector3Transform(Vector3 velocity, Matrix4 amount);
+Vector3 Vec_rot(Vector3 velocity, Matrix4 amount);
 
 Vector3 lens(Vector3 vec1, Vector3 vec2);
 float length(Vector3 vec);

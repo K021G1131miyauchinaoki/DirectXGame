@@ -83,7 +83,7 @@ Matrix4 Mat(WorldTransform w) {
 	return matComb;
 };
 
-Vector3 Vector3Transform(Vector3 velocity, Matrix4 amount) {
+Vector3 Vec_rot(Vector3 velocity, Matrix4 amount) {
 	Vector3 Rot;
 
 	Rot.x = velocity.x * amount.m[0][0];

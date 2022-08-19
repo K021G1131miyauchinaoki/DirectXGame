@@ -23,6 +23,16 @@ class Player {
 	/// 描画
 	/// </summary>
 	void Draw(ViewProjection& viewProjection);
+	///<summary>
+	///ワールド座標を取得
+	///< summary>
+	Vector3 GetWorldPosition();
+
+	//半径を取得
+	float GetRadius() { return r; }
+
+
+
 
   private:
 	//ワールド変換データ
@@ -35,4 +45,6 @@ class Player {
 	Input* input_ = nullptr;
 	//デバックテキスト
 	DebugText* debugText_ = nullptr;
+	//半径
+	const float r = 1.0f;
 };

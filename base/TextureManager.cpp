@@ -64,6 +64,7 @@ void TextureManager::SetGraphicsRootDescriptorTable(
 	commandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
 	// シェーダリソースビューをセット
+
 	commandList->SetGraphicsRootDescriptorTable(
 	  rootParamIndex, textures_[textureHandle].gpuDescHandleSRV);
 }
