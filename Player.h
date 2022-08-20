@@ -43,8 +43,21 @@ class Player {
 	uint32_t textureHandle_ = 0u;
 	//入力処理するため
 	Input* input_ = nullptr;
+	Input* oldinput_ = nullptr;
 	//デバックテキスト
 	DebugText* debugText_ = nullptr;
 	//半径
 	const float r = 1.0f;
+	//ジャンプ
+	float posY;
+	float jumpQuantity;
+	float minus;
+
+	//タイム
+	int putTime;
+	int time;
+
+	//フラグ
+	bool jumpFlag;
+
 };

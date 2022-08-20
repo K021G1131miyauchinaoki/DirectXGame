@@ -10,11 +10,12 @@
 
 //矩形(中心基準の場合)
 bool CheckHit(
-  float x1, float y1, float z1, float w1, float h1, float d1, float x2, float y2, float z2, float w2, float h2, float d2) {
+  float x1, float y1, float z1, float w1, float h1, float d1, float x2, float y2, float z2, float w2, float h2, float d2)
+{
 	float cl1 = x1 - w1;
-	float cr1 = x1 + w1 * 2;
+	float cr1 = cl1 + (w1 * 2);
 	float cl2 = x2 - w2;
-	float cr2 = x2 + w2 * 2;
+	float cr2 = cl2 + (w2 * 2);
 
 	if (cr1 <= cl2) {
 		return 0;
@@ -25,9 +26,9 @@ bool CheckHit(
 	}
 
 	float cu1 = y1 - h1;
-	float cd1 = y1 + h1 * 2;
+	float cd1 = cu1 + (h1 * 2);
 	float cu2 = y2 - h2;
-	float cd2 = y2 + h2 * 2;
+	float cd2 = cu2 + (h2 * 2);
 
 	if (cd1 <= cu2) {
 		return false;
@@ -38,9 +39,9 @@ bool CheckHit(
 	}
 
 	float cf1 = z1 - d1;
-	float cb1 = z1 + d1 * 2;
+	float cb1 = cf1 + (d1 * 2);
 	float cf2 = z2 - d2;
-	float cb2 = z2 + d2 * 2;
+	float cb2 = cf2 + (d2 * 2);
 
 	if (cb1 <= cf2) {
 		return false;
@@ -191,8 +192,9 @@ void GameScene::CheckAllCollision() {
 	posA = player_->GetWorldPosition();
 	posB = floor_->GetWorldPosition();
 	
-	if(CheckHit(posA.x - r, posA.y - r, posA.z - r, (r * 2), (r * 2), (r * 2), 
-		posB.x - vecFloor.x,posB.y - vecFloor.y, posB.z - vecFloor.z, (vecFloor.x * 2), (vecFloor.y * 2), (vecFloor.z* 2))) {
+	if (CheckHit(
+	      posA.x, posA.y, posA.z, r, r, r, posB.x, posB.y, posB.z, vecFloor.x, vecFloor.y,	vecFloor.z))
+	{
 		debugText_->SetPos(20, 0);
 		debugText_->Printf(
 		  "hit");

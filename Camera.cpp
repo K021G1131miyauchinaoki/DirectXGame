@@ -26,7 +26,7 @@ void Camera::Update() {
 	
 	//ワールドトランスフォームの座標を加算
 	//ワールド前方ベクトル
-	Vector3 forward(0, 10, 0);
+	Vector3 forward(0, 50, 0);
 	//レールカメラの回転を反映
 	forward = Vec_rot(forward, worldTransform_.matWorld_);
 	//視点から前方に適当な距離進んだ位置が注視点

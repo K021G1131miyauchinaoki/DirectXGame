@@ -13,9 +13,16 @@ void Player::Initialization(Model* model, uint32_t textureHandle) {
 	worldTransform_.translation_ = {0, -4, 0};
 	worldTransform_.Initialize();
 	// worldTransform_.parent_ = &railCamera_->GetWorldMatrix();
+	
+	jumpQuantity = 2;
+	
+	time = 5;
+	putTime = time;
+
 }
 
 void Player::Update() {
+
 	//ˆÚ“®
 	Vector3 move = {0, 0, 0};
 
@@ -41,6 +48,20 @@ void Player::Update() {
 			move = {speed, 0, -speed};
 		}
 	}
+	if (input_->PushKey(DIK_SPACE)&&putTime--==0&&jumpFlag==false) {
+		jumpFlag = true;
+	}
+	if (jumpFlag) {
+		posY = jumpQuantity - minus;
+		move = {0, posY, 0};
+		minus += 0.1f;
+		if (worldTransform_.translation_.y<-5) {
+			worldTransform_.translation_.y = -5;
+			minus = 0;
+			jumpFlag = false;
+			putTime = time;
+		}
+	}
 
 	worldTransform_.translation_ += move;
 	//ãŒÀA‰ºŒÀ‚ÌÝ’è
@@ -61,6 +82,9 @@ void Player::Update() {
 	debugText_->Printf(
 	  "Player:(%f,%f,%f)", worldTransform_.translation_.x, worldTransform_.translation_.y,
 	  worldTransform_.translation_.z);
+	debugText_->SetPos(50, 50);
+	debugText_->Printf(
+	  "junmlflag%d", jumpFlag);
 
 #pragma endregion
 }
