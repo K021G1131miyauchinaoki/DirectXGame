@@ -1,4 +1,5 @@
 #include "Player.h"
+#include"Camera.h"
 #include "Mat.h"
 #include <cassert>
 
@@ -10,70 +11,51 @@ void Player::Initialization(Model* model, uint32_t textureHandle) {
 	input_ = Input::GetInstance();
 	debugText_ = DebugText::GetInstance();
 
-	worldTransform_.translation_ = {0, -4, 0};
+	worldTransform_.translation_ = {0, -2, 30};
 	worldTransform_.Initialize();
 	// worldTransform_.parent_ = &railCamera_->GetWorldMatrix();
 	
-	jumpQuantity = 2;
+	jumpQuantity = 0.4;
 	
 	time = 5;
 	putTime = time;
 
+
+	oldTransform.y = worldTransform_.translation_.y + 0.5;
+
 }
 
 void Player::Update() {
+	oldTransform = worldTransform_.translation_;
+
 
 	//à⁄ìÆ
 	Vector3 move = {0, 0, 0};
 
-	const float speed = 0.2f;
+	float speed = 0.2f;
+	
 #pragma region à⁄ìÆèàóù
 	if (input_->PushKey(DIK_UP)) {
 		move = {0,  0,speed};
 	} else if (input_->PushKey(DIK_DOWN)) {
 		move = {0, 0, -speed};
-	} 
-	if (input_->PushKey(DIK_LEFT)) {
-		move = {-speed, 0, 0};
-		if (input_->PushKey(DIK_UP)) {
-			move = {-speed, 0, speed};
-		} else if (input_->PushKey(DIK_DOWN)) {
-			move = {-speed, 0, -speed};
-		}
-	} else if (input_->PushKey(DIK_RIGHT)) {
-		move = {speed, 0, 0};
-		if (input_->PushKey(DIK_UP)) {
-			move = {speed, 0, speed};
-		} else if (input_->PushKey(DIK_DOWN)) {
-			move = {speed, 0, -speed};
-		}
 	}
-	if (input_->PushKey(DIK_SPACE)&&putTime--==0&&jumpFlag==false) {
+	if (input_->PushKey(DIK_SPACE) && putTime-- == 0 && jumpFlag == false && collisionFlag == false){
 		jumpFlag = true;
 	}
 	if (jumpFlag) {
 		posY = jumpQuantity - minus;
-		move = {0, posY, 0};
-		minus += 0.1f;
-		if (worldTransform_.translation_.y<-5) {
-			worldTransform_.translation_.y = -5;
-			minus = 0;
-			jumpFlag = false;
-			putTime = time;
-		}
+		move.y = posY;
+		minus += 0.01f;
 	}
 
+
+
 	worldTransform_.translation_ += move;
-	//è„å¿ÅAâ∫å¿ÇÃê›íË
-	const float kMoveLimitX = 14.0f;
-	// const float kMoveLimitY = 8.0f;
-	 worldTransform_.translation_.x = max(worldTransform_.translation_.x, -kMoveLimitX);
-	 worldTransform_.translation_.x = min(worldTransform_.translation_.x, +kMoveLimitX);
-	// worldTransform_.translation_.y = max(worldTransform_.translation_.y, -kMoveLimitY);
-	// worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMoveLimitY);
 
 	worldTransform_.matWorld_ = matIdentity();
 	worldTransform_.matWorld_ = Mat(worldTransform_);
+	worldTransform_.matWorld_ *= worldTransform_.parent_->matWorld_;
 
 	//çsóÒÇÃì]ëó
 	worldTransform_.TransferMatrix();
@@ -82,9 +64,13 @@ void Player::Update() {
 	debugText_->Printf(
 	  "Player:(%f,%f,%f)", worldTransform_.translation_.x, worldTransform_.translation_.y,
 	  worldTransform_.translation_.z);
-	debugText_->SetPos(50, 50);
+	debugText_->SetPos(50, 30);
 	debugText_->Printf(
-	  "junmlflag%d", jumpFlag);
+	  "minus%f", minus);
+	collisionFlag = false;
+	debugText_->SetPos(200, 30);
+	debugText_->Printf("jumpQuantity%f", jumpQuantity);
+	collisionFlag = false;
 
 #pragma endregion
 }
@@ -104,4 +90,40 @@ Vector3 Player::GetWorldPosition() {
 	worldPos.z = worldTransform_.matWorld_.m[3][2];
 
 	return worldPos;
+}
+
+//è’ìÀÇµÇΩÇÁ
+void Player::UpCollision() {
+	worldTransform_.translation_.y = oldTransform.y;
+	minus = 0;
+	jumpFlag = false;
+	putTime = time;
+	collisionFlag = false;
+}
+
+
+void Player::SideCollision() {
+	worldTransform_.translation_.x = oldTransform.x	;
+	worldTransform_.translation_.z = oldTransform.z;
+	minus -= 0.0001f;
+	worldTransform_.translation_.y += minus;
+	collisionFlag = false;
+
+}
+
+void Player::DownCollision() {
+	
+	worldTransform_.translation_ = oldTransform;
+	jumpFlag = false;
+	collisionFlag = false;
+}
+
+
+void Player::OffCollision() {
+	if (!jumpFlag) {
+		collisionFlag = true;
+		minus -= 0.01f;
+		worldTransform_.translation_.y += minus;
+		collisionFlag = false;
+	}
 }

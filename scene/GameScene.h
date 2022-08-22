@@ -15,6 +15,7 @@
 #include"Floor.h"
 #include"Camera.h"
 
+
 /// <summary>
 /// ゲームシーン
 /// </summary>
@@ -78,4 +79,6 @@ class GameScene {
 	float r ;
 
 	Vector3 vecFloor;
+
+
 };

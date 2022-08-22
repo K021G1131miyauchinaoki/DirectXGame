@@ -9,6 +9,11 @@
 #include <memory>
 #pragma once
 
+
+//カメラクラス
+class Camera;
+
+
 class Player {
   public:
 	/// <summary>
@@ -31,8 +36,19 @@ class Player {
 	//半径を取得
 	float GetRadius() { return r; }
 
+	//ジャンプして衝突したら
+	void	UpCollision();
 
+	//側面に当たったら
+	void SideCollision();
 
+	void DownCollision();
+
+	//衝突していなかったら
+	void OffCollision();
+
+	//カメラセッター
+	void SetParent(const WorldTransform* parent) { worldTransform_.parent_ = parent; }
 
   private:
 	//ワールド変換データ
@@ -57,7 +73,15 @@ class Player {
 	int putTime;
 	int time;
 
+
 	//フラグ
 	bool jumpFlag;
+	bool collisionFlag;
+	
+
+	Vector3 oldTransform;
+
+	//カメラクラス
+	Camera* camera_ = nullptr;
 
 };

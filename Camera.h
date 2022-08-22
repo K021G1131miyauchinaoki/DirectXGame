@@ -41,3 +41,4 @@ class Camera {
 
 	Player* player = nullptr;
 };
+
