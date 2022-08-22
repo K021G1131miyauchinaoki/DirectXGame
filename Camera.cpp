@@ -13,7 +13,7 @@ void Camera::Initialize(const Vector3& position, const Vector3& rotation) {
 
 void Camera::Update() {
 	//移動（ベクトルを加算）
-	worldTransform_.translation_ += Vector3(0, 0, 0.1f);
+	worldTransform_.translation_ += Vector3(0, 0, 0.05f);
 	//ワールドトランスフォームの更新
 	worldTransform_.matWorld_ = matIdentity();
 	worldTransform_.matWorld_ *= Mat_size(worldTransform_);
@@ -26,23 +26,23 @@ void Camera::Update() {
 
 	//ワールドトランスフォームの座標を加算
 	//ワールド前方ベクトル
-	Vector3 forward(0, 0, 1);
+	Vector3 forward(200, 30, 0);
 	//レールカメラの回転を反映
 	//forward = Vec_rot(forward, worldTransform_.matWorld_);
 	//視点から前方に適当な距離進んだ位置が注視点
-	viewProjection_.target = forward += viewProjection_.eye;
+	viewProjection_.target -= viewProjection_.eye += forward;
 
 	//ワールドトランスフォームの角度を加算
 	//ワールド上方ベクトル
-	//Vector3 up(0, 1, 0);
+	Vector3 up(0, 1, 0);
 	//レールカメラの回転を反映
-	//viewProjection_.up = Vec_rot(up, worldTransform_.matWorld_);
+	viewProjection_.up = Vec_rot(up, worldTransform_.matWorld_);
 
 	//ビュープロジェクションの更新
 	viewProjection_.UpdateMatrix();
 
-	debugText_->SetPos(20, 110);
-	debugText_->Printf(
-	  "RailCamera Pos:(%f,%f,%f)", viewProjection_.eye.x, viewProjection_.eye.y,
-	  viewProjection_.eye.z);
+	//debugText_->SetPos(20, 110);
+	//debugText_->Printf(
+	//  "RailCamera Pos:(%f,%f,%f)", viewProjection_.eye.x, viewProjection_.eye.y,
+	//  viewProjection_.eye.z);
 }

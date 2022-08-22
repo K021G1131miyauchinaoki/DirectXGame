@@ -147,7 +147,7 @@ void GameScene::Initialize() {
 	player_->Initialization(model_, textureHandle_[0]);
 	
 	//床
-	vecFloor = {5.0f, 1.0f, 50.0f};
+	vecFloor = {5.0f, 1.0f, 100.0f};
 	floor_ = new Floor();
 	floor_->Initialization(model_, textureHandle_[1],vecFloor);
 

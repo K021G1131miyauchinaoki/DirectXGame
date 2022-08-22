@@ -11,7 +11,7 @@ void Player::Initialization(Model* model, uint32_t textureHandle) {
 	input_ = Input::GetInstance();
 	debugText_ = DebugText::GetInstance();
 
-	worldTransform_.translation_ = {0, -2, 30};
+	worldTransform_.translation_ = {150, 12, -95};
 	worldTransform_.Initialize();
 	// worldTransform_.parent_ = &railCamera_->GetWorldMatrix();
 	
@@ -32,9 +32,13 @@ void Player::Update() {
 	//移動
 	Vector3 move = {0, 0, 0};
 
-	float speed = 0.2f;
+	float speed = 0.05f;
 	
 #pragma region 移動処理
+	if (input_->PushKey(DIK_C)) {
+		speed = 0.1f;
+	}
+
 	if (input_->PushKey(DIK_UP)) {
 		move = {0,  0,speed};
 	} else if (input_->PushKey(DIK_DOWN)) {
@@ -55,21 +59,21 @@ void Player::Update() {
 
 	worldTransform_.matWorld_ = matIdentity();
 	worldTransform_.matWorld_ = Mat(worldTransform_);
-	worldTransform_.matWorld_ *= worldTransform_.parent_->matWorld_;
+	//worldTransform_.matWorld_ *= worldTransform_.parent_->matWorld_;
 
 	//行列の転送
 	worldTransform_.TransferMatrix();
 
-	debugText_->SetPos(50, 70);
-	debugText_->Printf(
-	  "Player:(%f,%f,%f)", worldTransform_.translation_.x, worldTransform_.translation_.y,
-	  worldTransform_.translation_.z);
-	debugText_->SetPos(50, 30);
-	debugText_->Printf(
-	  "minus%f", minus);
-	collisionFlag = false;
-	debugText_->SetPos(200, 30);
-	debugText_->Printf("jumpQuantity%f", jumpQuantity);
+	//debugText_->SetPos(50, 70);
+	//debugText_->Printf(
+	//  "Player:(%f,%f,%f)", worldTransform_.translation_.x, worldTransform_.translation_.y,
+	//  worldTransform_.translation_.z);
+	//debugText_->SetPos(50, 30);
+	//debugText_->Printf(
+	//  "minus%f", minus);
+	//collisionFlag = false;
+	//debugText_->SetPos(200, 30);
+	//debugText_->Printf("jumpQuantity%f", jumpQuantity);
 	collisionFlag = false;
 
 #pragma endregion
@@ -85,9 +89,9 @@ Vector3 Player::GetWorldPosition() {
 	Vector3 worldPos;
 	//ワールド行列の平行移動成分を取得
 	// worldTransform_.matWorld_.m;
-	worldPos.x = worldTransform_.matWorld_.m[3][0];
-	worldPos.y = worldTransform_.matWorld_.m[3][1];
-	worldPos.z = worldTransform_.matWorld_.m[3][2];
+	worldPos.x = worldTransform_.translation_.x;
+	worldPos.y = worldTransform_.translation_.y;
+	worldPos.z = worldTransform_.translation_.z;
 
 	return worldPos;
 }

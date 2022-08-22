@@ -10,7 +10,7 @@ void Floor::Initialization(Model* model, uint32_t textureHandle, const Vector3&s
 	debugText_ = DebugText::GetInstance();
 	
 	worldTransform_.scale_ = scale;
-	worldTransform_.translation_ = {0.0f,-5.0f,0.0f};
+	worldTransform_.translation_ = {150.0f,10.0f,0.0f};
 
 	worldTransform_.Initialize();
 	
@@ -25,10 +25,10 @@ void Floor::Update() {
 
 	//行列の転送
 	worldTransform_.TransferMatrix();
-	debugText_->SetPos(50, 90);
-	debugText_->Printf(
-	  "Floor:(%f,%f,%f)", worldTransform_.translation_.x, worldTransform_.translation_.y,
-	  worldTransform_.translation_.z);
+	//debugText_->SetPos(50, 90);
+	//debugText_->Printf(
+	//  "Floor:(%f,%f,%f)", worldTransform_.translation_.x, worldTransform_.translation_.y,
+	//  worldTransform_.translation_.z);
 }
 
 void Floor::Draw(ViewProjection& viewProjection) {
@@ -41,9 +41,9 @@ Vector3 Floor::GetWorldPosition() {
 	Vector3 worldPos;
 	//ワールド行列の平行移動成分を取得
 	// worldTransform_.matWorld_.m;
-	worldPos.x = worldTransform_.matWorld_.m[3][0];
-	worldPos.y = worldTransform_.matWorld_.m[3][1];
-	worldPos.z = worldTransform_.matWorld_.m[3][2];
+	worldPos.x = worldTransform_.translation_.x;
+	worldPos.y = worldTransform_.translation_.y;
+	worldPos.z = worldTransform_.translation_.z;
 
 	return worldPos;
 }
