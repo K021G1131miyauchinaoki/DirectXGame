@@ -35,13 +35,13 @@ void Player::Update() {
 	float speed = 0.05f;
 	
 #pragma region ˆÚ“®ˆ—
-	if (input_->PushKey(DIK_C)) {
+	if (input_->PushKey(DIK_DOWN) || input_->PushKey(DIK_S)) {
 		speed = 0.1f;
 	}
 
-	if (input_->PushKey(DIK_UP)) {
+	if (input_->PushKey(DIK_RIGHT) || input_->PushKey(DIK_D)) {
 		move = {0,  0,speed};
-	} else if (input_->PushKey(DIK_DOWN)) {
+	} else if (input_->PushKey(DIK_LEFT || input_->PushKey(DIK_A))) {
 		move = {0, 0, -speed};
 	}
 	if (input_->PushKey(DIK_SPACE) && putTime-- == 0 && jumpFlag == false && collisionFlag == false){
