@@ -130,7 +130,11 @@ float Clamp(float min, float max, float num) {
 
 GameScene::GameScene() {}
 
-GameScene::~GameScene() {}
+GameScene::~GameScene() {
+	delete player_;
+	delete floor_;
+	delete fall_;
+}
 
 void GameScene::Initialize() {
 
@@ -147,14 +151,21 @@ void GameScene::Initialize() {
 	player_->Initialization(model_, textureHandle_[0]);
 	
 	//床
-	vecFloor = {5.0f, 1.0f, 100.0f};
+	transFloor = {5.0f, 1.0f, 100.0f};
 	floor_ = new Floor();
-	floor_->Initialization(model_, textureHandle_[1],vecFloor);
+	floor_->Initialization(model_, textureHandle_[1],transFloor);
+
+	//落下
+	fall_ = new Fall;
+	fall_->Initialization(model_, textureHandle_[1], Vector3(1, 1, 1), Vector3(150, 15, -80));
 
 	//カメラ
 	camera_ = std::make_unique<Camera>();
 	camera_->Initialize(Vector3(0, 0, -100), Vector3(0, 0, 0));
 	player_->SetParent(&camera_->GetWorldTransform());
+
+
+
 	//カメラ垂直方向視野角を設定
 	viewProjection_.fovAngleY = Radian_transform(20.0f);
 	//アスペクト比
@@ -187,6 +198,7 @@ void GameScene::Update() {
 	viewProjection_.TransferMatrix();
 	player_->Update(); 
 	floor_->Update();
+	fall_->Update(Vector3(150, 15, -80));
 }
 
 void GameScene::Draw() {
@@ -217,6 +229,7 @@ void GameScene::Draw() {
 	/// </summary>
 	player_->Draw(viewProjection_);
 	floor_->Draw(viewProjection_);
+	fall_->Draw(viewProjection_);
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion
@@ -247,22 +260,22 @@ void GameScene::CheckAllCollision() {
 	posB = floor_->GetWorldPosition();
 	//ジャンプ用
 	if (CheckHit(
-	      posA.x, posA.y, posA.z, r, r, r, posB.x, posB.y, posB.z, vecFloor.x, vecFloor.y,	vecFloor.z))
+	      posA.x, posA.y, posA.z, r, r, r, posB.x, posB.y, posB.z, transFloor.x, transFloor.y,	transFloor.z))
 	{
-		if (PlaneHit(posA.x, posA.y, r, r, posB.x, posB.y, vecFloor.x, vecFloor.y, posB.z + vecFloor.z,posA.z - r)
-			||PlaneHit(posA.x, posA.y, r, r, posB.x, posB.y, vecFloor.x, vecFloor.y, posB.z - vecFloor.z,posA.z + r)
-			||PlaneHit(posA.z, posA.y, r, r, posB.z, posB.y, vecFloor.z, vecFloor.y, posB.x - vecFloor.x,posA.x + r)
-			||PlaneHit(posA.z, posA.y, r, r, posB.z, posB.y, vecFloor.z, vecFloor.y, posB.x + vecFloor.x,posA.x - r)) {
+		if (PlaneHit(posA.x, posA.y, r, r, posB.x, posB.y, transFloor.x, transFloor.y, posB.z + transFloor.z,posA.z - r)
+			||PlaneHit(posA.x, posA.y, r, r, posB.x, posB.y, transFloor.x, transFloor.y, posB.z - transFloor.z,posA.z + r)
+			||PlaneHit(posA.z, posA.y, r, r, posB.z, posB.y, transFloor.z, transFloor.y, posB.x - transFloor.x,posA.x + r)
+			||PlaneHit(posA.z, posA.y, r, r, posB.z, posB.y, transFloor.z, transFloor.y, posB.x + transFloor.x,posA.x - r)) {
 			player_->SideCollision();
 			debugText_->SetPos(100, 0);
 			debugText_->Printf("1");
 		} 
-		else if (PlaneHit(posA.x, posA.z, r, r, posB.x, posB.z, vecFloor.x, vecFloor.z, posB.y + vecFloor.y, posA.y - r)) {
+		else if (PlaneHit(posA.x, posA.z, r, r, posB.x, posB.z, transFloor.x, transFloor.z, posB.y + transFloor.y, posA.y - r)) {
 			player_->UpCollision();
 			debugText_->SetPos(80, 0);
 			debugText_->Printf("2");
 		} 
-		else if (PlaneHit(posA.x, posA.z, r, r, posB.x, posB.z, vecFloor.x, vecFloor.z,posB.y - vecFloor.y, posA.y + r)) {
+		else if (PlaneHit(posA.x, posA.z, r, r, posB.x, posB.z, transFloor.x, transFloor.z,posB.y - transFloor.y, posA.y + r)) {
 			player_->DownCollision();
 			debugText_->SetPos(100, 0);
 			debugText_->Printf("3");
@@ -276,7 +289,7 @@ void GameScene::CheckAllCollision() {
 	}
 	//床に当たっていないとき
 	else if (!CheckHit(
-	      posA.x, posA.y, posA.z, r, r, r, posB.x, posB.y, posB.z, vecFloor.x, vecFloor.y+1.0f,vecFloor.z)) {
+	      posA.x, posA.y, posA.z, r, r, r, posB.x, posB.y, posB.z, transFloor.x, transFloor.y+1.0f,transFloor.z)) {
 		 player_->OffCollision();
 	}
 	#pragma endregion

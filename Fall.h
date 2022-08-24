@@ -16,13 +16,12 @@ class Fall {
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialization(
-	  Model* model, uint32_t textureHandle, const Vector3& scale, const Vector3& );
+	void Initialization( Model* model, uint32_t textureHandle, const Vector3& scale, const Vector3& trans);
 
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update(const Vector3& trans);
 
 	/// <summary>
 	/// 描画
@@ -45,4 +44,7 @@ class Fall {
 	Input* input_ = nullptr;
 	//デバックテキスト
 	DebugText* debugText_ = nullptr;
+	//落下
+	float posY;
+	float minus;
 };

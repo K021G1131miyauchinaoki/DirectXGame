@@ -2,8 +2,9 @@
 #include "Mat.h"
 #include "Fall.h"
 #include <cassert>
+#include <random>
 
-void Fall::Initialization(Model* model, uint32_t textureHandle, const Vector3& scale) {
+void Fall::Initialization(Model* model, uint32_t textureHandle, const Vector3& scale, const Vector3& trans) {
 	assert(model);
 
 	this->model_ = model;
@@ -12,23 +13,44 @@ void Fall::Initialization(Model* model, uint32_t textureHandle, const Vector3& s
 	debugText_ = DebugText::GetInstance();
 
 	worldTransform_.scale_ = scale;
-	worldTransform_.translation_ = {150.0f, 10.0f, 0.0f};
+	worldTransform_.translation_ = trans;
 
 	worldTransform_.Initialize();
 }
 
-void Fall::Update() {
-	// worldTransform_.scale_ = scale;
-	// worldTransform_.translation_ = position;
+void Fall::Update( const Vector3& trans) {
+	//移動
+	Vector3 move = {0, 0, 0};
+
+	//worldTransform_.translation_ = trans;
+	//move.y = minus;
+	//minus -= 0.01f;
+#pragma region 乱数
+	//乱数シード生成器
+	 std::random_device seed_gen;
+	//メルセンヌ・ツイスターの乱数エンジン
+	 std::mt19937_64 engine(seed_gen());
+	//乱数範囲の指定
+	 std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
+	//乱数	（座標）
+	 std::uniform_real_distribution<float> posDist(trans.z-1.0f, trans.z+1.0f);
+	//乱数　（回転）
+	// std::uniform_real_distribution<float> rotDist(-1.9f, 1.9f);
+	//乱数エンジンを渡し、指定範囲かっランダムな数値を得る
+	 float value = dist(engine);
+	 value = posDist(engine);
+#pragma endregion
+
+	worldTransform_.translation_.z = value;
 	worldTransform_.matWorld_ = matIdentity();
 	worldTransform_.matWorld_ = Mat(worldTransform_);
 
 	//行列の転送
 	worldTransform_.TransferMatrix();
-	// debugText_->SetPos(50, 90);
-	// debugText_->Printf(
-	//   "Floor:(%f,%f,%f)", worldTransform_.translation_.x, worldTransform_.translation_.y,
-	//   worldTransform_.translation_.z);
+	debugText_->SetPos(50, 90);
+	debugText_->Printf(
+	  "Floor:(%f,%f,%f)", worldTransform_.translation_.x, worldTransform_.translation_.y,
+	  worldTransform_.translation_.z);
 }
 
 void Fall::Draw(ViewProjection& viewProjection) {

@@ -14,6 +14,7 @@
 #include<Player.h>
 #include"Floor.h"
 #include"Camera.h"
+#include"Fall.h"
 
 
 /// <summary>
@@ -78,7 +79,10 @@ class GameScene {
 	//半径
 	float r ;
 
-	Vector3 vecFloor;
+	Vector3 transFloor;
+
+	//落下
+	Fall*fall_=nullptr;
 
 
 };
