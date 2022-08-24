@@ -16,6 +16,7 @@ void Fall::Initialization(Model* model, uint32_t textureHandle, const Vector3& s
 	worldTransform_.translation_ = trans;
 
 	worldTransform_.Initialize();
+	randNum = 0.2f;
 }
 
 void Fall::Update( const Vector3& trans) {
@@ -31,9 +32,9 @@ void Fall::Update( const Vector3& trans) {
 	//メルセンヌ・ツイスターの乱数エンジン
 	 std::mt19937_64 engine(seed_gen());
 	//乱数範囲の指定
-	 std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
+	 std::uniform_real_distribution<float> dist(-randNum, randNum);
 	//乱数	（座標）
-	 std::uniform_real_distribution<float> posDist(trans.z-1.0f, trans.z+1.0f);
+	 std::uniform_real_distribution<float> posDist(trans.z - randNum, trans.z + randNum);
 	//乱数　（回転）
 	// std::uniform_real_distribution<float> rotDist(-1.9f, 1.9f);
 	//乱数エンジンを渡し、指定範囲かっランダムな数値を得る

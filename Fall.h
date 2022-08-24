@@ -44,7 +44,10 @@ class Fall {
 	Input* input_ = nullptr;
 	//デバックテキスト
 	DebugText* debugText_ = nullptr;
-	//落下
+	//落下用
 	float posY;
 	float minus;
+
+	//乱数用
+	float randNum;
 };
