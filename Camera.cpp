@@ -1,19 +1,31 @@
 #include "Mat.h"
 #include "Camera.h"
 
-void Camera::Initialize(const Vector3& position, const Vector3& rotation) {
-	//ワールド行列
-	worldTransform_.translation_ = position;
-	worldTransform_.rotation_ = rotation;
+void Camera::Initialize() {
 
 	//ビュープロジェクション初期化
 	viewProjection_.farZ = 2000.0f;
 	viewProjection_.Initialize();
 }
 
+void Camera::State(const Vector3& position, const Vector3& rotation) {
+	//ワールド行列
+	worldTransform_.translation_ = position;
+	worldTransform_.rotation_ = rotation;
+	flag_ = 0;
+	time = 50;
+	timer = time;
+
+}
+
 void Camera::Update() {
 	//移動（ベクトルを加算）
-	worldTransform_.translation_ += Vector3(0, 0, 0.05f);
+	if (flag_ != 0) {
+		if (--timer <= 0) {
+			timer = 0;
+			worldTransform_.translation_ += Vector3(0, 0, 0.05f);
+		}
+	}
 	//ワールドトランスフォームの更新
 	worldTransform_.matWorld_ = matIdentity();
 	worldTransform_.matWorld_ *= Mat_size(worldTransform_);

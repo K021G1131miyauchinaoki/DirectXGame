@@ -12,11 +12,15 @@
 
 class Fall {
   public:
-  public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialization( Model* model, uint32_t textureHandle, const Vector3& scale, const Vector3& trans);
+	void Initialization( Model* model, uint32_t textureHandle);
+
+	/// <summary>
+	/// 更新内の初期化
+	/// </summary>
+	void State( const Vector3& trans);
 
 	/// <summary>
 	/// 更新
@@ -33,6 +37,11 @@ class Fall {
 	///< summary>
 	Vector3 GetWorldPosition();
 
+	float SetPlayer(const float& trans) { return trans_ = trans; };
+
+	//衝突したら
+	void OnCollision();
+
   private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
@@ -45,9 +54,15 @@ class Fall {
 	//デバックテキスト
 	DebugText* debugText_ = nullptr;
 	//落下用
-	float posY;
+	float move;
 	float minus;
 
 	//乱数用
 	float randNum;
+
+	float trans_;
+
+	bool fallFlag;
+
+	bool flag;
 };

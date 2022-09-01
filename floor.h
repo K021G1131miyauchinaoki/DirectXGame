@@ -14,7 +14,12 @@ class Floor {
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialization(Model* model, uint32_t textureHandle, const Vector3& scale);
+	void Initialization(Model* model, uint32_t textureHandle);
+
+	/// <summary>
+	/// 更新内の初期化
+	/// </summary>
+	void State(const Vector3& scale);
 
 	/// <summary>
 	/// 更新

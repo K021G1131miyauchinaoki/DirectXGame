@@ -1,17 +1,15 @@
 #include "DebugText.h"
 #include "Input.h"
+#include "Audio.h"
 #include "Model.h"
-//#include "PayerBullet.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include <assert.h>
 #include <list>
 #include <memory>
+#include"after.h"
 #pragma once
 
-
-//カメラクラス
-class Camera;
 
 
 class Player {
@@ -20,6 +18,12 @@ class Player {
 	/// 初期化
 	/// </summary>
 	void Initialization(Model* model, uint32_t textureHandle);
+
+	/// <summary>
+	/// 更新内の初期化
+	/// </summary>
+	void State();
+
 	/// <summary>
 	/// 更新
 	/// </summary>
@@ -42,13 +46,30 @@ class Player {
 	//側面に当たったら
 	void SideCollision();
 
+	void SideCollision2();
+	void SideCollision3();
+	void SideCollision4();
+
 	void DownCollision();
 
 	//衝突していなかったら
 	void OffCollision();
 
-	//カメラセッター
-	void SetParent(const WorldTransform* parent) { worldTransform_.parent_ = parent; }
+
+	//衝突したら
+	void OnCollision();
+
+	void SwampCollision();
+
+
+	bool GetFlag() { return flag; };
+
+	std::list<std::unique_ptr<after>> afters_;
+
+	//リストを取得
+	std::list<std::unique_ptr<after>>& GetAfters() { return afters_; };
+
+	static const int kFireInterval = 5;
 
   private:
 	//ワールド変換データ
@@ -62,26 +83,36 @@ class Player {
 	Input* oldinput_ = nullptr;
 	//デバックテキスト
 	DebugText* debugText_ = nullptr;
+	
+	//SE
+	Audio* audio_ = nullptr;
+	uint32_t seJump = 0u;
+	uint32_t soundDrain = 0u;
+
 	//半径
 	const float r = 1.0f;
 	//ジャンプ
 	float posY;
 	float jumpQuantity;
-	float minus;
+	float speed;
 
 	//タイム
 	int putTime;
 	int time;
 
+	int32_t afterTime = 0;
 
 	//フラグ
 	bool jumpFlag;
 	bool collisionFlag;
-	
+	bool flag;
+	bool swampFlag;
+	int seFlag;
 
 	Vector3 oldTransform;
 
-	//カメラクラス
-	Camera* camera_ = nullptr;
+	//移動
+	Vector3 move ;
 
+	float minus ;
 };

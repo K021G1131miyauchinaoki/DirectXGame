@@ -102,12 +102,18 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Fall.cpp" />
     <ClCompile Include="Floor.cpp" />
+    <ClCompile Include="Goal.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mat.cpp" />
+    <ClCompile Include="MoveBox.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
+    <ClCompile Include="Skydome.cpp" />
+    <ClCompile Include="Swamp.cpp" />
+    <ClCompile Include="after.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="after.h" />
     <ClInclude Include="Fall.h" />
     <ClInclude Include="2d\DebugText.h" />
     <ClInclude Include="2d\Sprite.h" />
@@ -131,6 +137,7 @@
     <ClInclude Include="base\WinApp.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Floor.h" />
+    <ClInclude Include="Goal.h" />
     <ClInclude Include="input\Input.h" />
     <ClInclude Include="Mat.h" />
     <ClInclude Include="math\MathUtility.h" />
@@ -138,8 +145,11 @@
     <ClInclude Include="math\Vector2.h" />
     <ClInclude Include="math\Vector3.h" />
     <ClInclude Include="math\Vector4.h" />
+    <ClInclude Include="MoveBox.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="scene\GameScene.h" />
+    <ClInclude Include="Skydome.h" />
+    <ClInclude Include="Swamp.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\Obj.hlsli" />

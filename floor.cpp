@@ -1,7 +1,7 @@
 #include"Floor.h"
 #include"Mat.h"
 
-void Floor::Initialization(Model* model, uint32_t textureHandle, const Vector3&scale) {
+void Floor::Initialization(Model* model, uint32_t textureHandle) {
 	assert(model);
 
 	this->model_ = model;
@@ -9,12 +9,12 @@ void Floor::Initialization(Model* model, uint32_t textureHandle, const Vector3&s
 	input_ = Input::GetInstance();
 	debugText_ = DebugText::GetInstance();
 	
+	worldTransform_.Initialize();
+}
+
+void Floor::State(const Vector3& scale) {
 	worldTransform_.scale_ = scale;
 	worldTransform_.translation_ = {150.0f,10.0f,0.0f};
-
-	worldTransform_.Initialize();
-	
-	
 }
 
 void Floor::Update() {
@@ -25,10 +25,7 @@ void Floor::Update() {
 
 	//s—ñ‚Ì“]‘—
 	worldTransform_.TransferMatrix();
-	//debugText_->SetPos(50, 90);
-	//debugText_->Printf(
-	//  "Floor:(%f,%f,%f)", worldTransform_.translation_.x, worldTransform_.translation_.y,
-	//  worldTransform_.translation_.z);
+	
 }
 
 void Floor::Draw(ViewProjection& viewProjection) {

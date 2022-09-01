@@ -14,7 +14,12 @@ class Camera {
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(const Vector3& position, const Vector3& rotation);
+	void Initialize();
+
+	/// <summary>
+	/// 更新内の初期化
+	/// </summary>
+	void State(const Vector3& position,const Vector3& rotation);
 
 	/// <summary>
 	/// 更新
@@ -31,6 +36,8 @@ class Camera {
 
 	WorldTransform& GetWorldTransform() { return worldTransform_; }
 
+	int GetFlag(int flag) { return flag_ = flag; }
+
   private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
@@ -40,5 +47,10 @@ class Camera {
 	DebugText* debugText_ = DebugText::GetInstance();
 
 	Player* player = nullptr;
+
+	int flag_;
+
+	int time;
+	int timer;
 };
 
