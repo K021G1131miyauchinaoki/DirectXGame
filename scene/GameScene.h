@@ -168,4 +168,5 @@ class GameScene {
 	Skydome* skydome_ = nullptr;
 	// 3Dモデル
 	Model* modelSkydome_ = nullptr;
+
 };
