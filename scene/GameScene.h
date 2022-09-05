@@ -30,7 +30,7 @@ const int boxNum2 = 2;
 //ステージ3
 const int fallNum3 = 2;  
 const int boxNum3 = 2;
-const int swampNum3 = 1;
+const int swampNum3 = 2;
 
 
 
@@ -71,6 +71,7 @@ class GameScene {
 	void CheckAllCollision0();
 	void CheckAllCollision1();
 	void CheckAllCollision2();
+	void CheckAllCollision3();
 
   private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -135,13 +136,16 @@ class GameScene {
       {150, 20,	   -6 },
     };
 	Vector3 transFall3[fallNum3] = {
-	  {150, 11, -60},
-      {150, 18, -61}
+	  {150, 10.5, -61},
+      {150, 21.5, -60}
     };
 
 	//沼
 	Swamp* swamp_[swampNums];
-	Vector3 transSwamp;
+	Vector3 transSwamp3[swampNum3] = {
+		{150,15,-60},
+		{150,15,-15 }
+	};
 	Vector3 scaleSwamp;
 
 	//箱
@@ -151,8 +155,8 @@ class GameScene {
 	  {150, 15, 0}
 	};
 	Vector3 transBox3[boxNum3] = {
-	  {130, 15, -30},
-      {150, 15, 0  }
+	  {130, 15, -25},
+      {150, 15, -5  }
     };
 	Vector3 scaleBox;
 

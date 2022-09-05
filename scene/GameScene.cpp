@@ -273,7 +273,6 @@ void GameScene::Initialize() {
 	}
 
 	//沼
-	transSwamp = {150, 15, 0};
 	scaleSwamp = {4.0f, 6.0f, 6.0f};
 	for (size_t i = 0; i < swampNums; i++) {
 		swamp_[i] = new Swamp;
@@ -389,7 +388,6 @@ void GameScene::Update() {
 			for (size_t i = 0; i < fallNums; i++) {
 				fall_[i]->SetPlayer(player_->GetWorldPosition().z);
 				fall_[i]->Update(transFall[i]);
-				
 			}
 
 			//ゴール
@@ -413,6 +411,32 @@ void GameScene::Update() {
 			//swamp_[0]->Update();
 			//箱
 			for (size_t i = 0; i < boxNum2; i++) {
+				box_[i]->Update();
+			}
+
+			//ゴール
+			goal_->Update();
+		}
+		// 3
+		else if (stageFalg == 3) {
+			CheckAllCollision3();
+			camera_->Update();
+			viewProjection_.matView = camera_->GetViewProjection().matView;
+			viewProjection_.matProjection = camera_->GetViewProjection().matProjection;
+
+			viewProjection_.TransferMatrix();
+
+			//落下物
+			for (size_t i = 0; i < fallNum3; i++) {
+				fall_[i]->SetPlayer(player_->GetWorldPosition().z);
+				fall_[i]->Update(transFall3[i]);
+			}
+			//沼
+			for (int i = 0; i < swampNum3; i++) {
+				swamp_[i]->Update();
+			}
+			//箱
+			for (size_t i = 0; i < boxNum3; i++) {
 				box_[i]->Update();
 			}
 
@@ -488,13 +512,40 @@ void GameScene::Update() {
 				//ゴール
 				goal_->State(goalZ);
 			}
+			//ステージ3
+			if (stageFalg == 3) {
+				//プレイヤー
+				player_->State();
+
+				//床
+				floor_->State(scaleFloor);
+
+				//落下
+				for (int i = 0; i < fallNum3; i++) {
+					fall_[i]->State(transFall3[i]);
+				}
+
+				//沼
+				for (int i = 0; i < swampNum3; i++) {
+					swamp_[i]->State(scaleSwamp, transSwamp3[i]);
+				}
+				//箱
+				for (size_t i = 0; i < boxNum3; i++) {
+					box_[i]->State(scaleBox, transBox3[i]);
+				}
+				//カメラ
+				camera_->State(Vector3(0, 0, -100), Vector3(0, 0, 0));
+
+				//ゴール
+				goal_->State(goalZ);
+			}
 			
 		}
 		//G
-		if (input_->PushKey(DIK_G) && sceneFlag == 3) {
+		if (input_->PushKey(DIK_G) && sceneFlag == 3&&stageFalg!=3) {
 				sceneFlag = 1;
 				bgmFlag = 1;
-				stageFalg = 2;
+				stageFalg += 1;
 				//ステージ2
 				if (stageFalg == 2) {
 				//プレイヤー
@@ -508,9 +559,6 @@ void GameScene::Update() {
 					fall_[i]->State(transFall2[i]);
 				}
 
-				//沼
-				swamp_[0]->State(scaleSwamp, transSwamp);
-
 				//箱
 				for (size_t i = 0; i < boxNum2; i++) {
 					box_[i]->State(scaleBox, transBox2[i]);
@@ -519,9 +567,37 @@ void GameScene::Update() {
 				camera_->State(Vector3(0, 0, -100), Vector3(0, 0, 0));
 
 				//ゴール
-				goalZ = 30;
+				goalZ = 10;
 				goal_->State(goalZ);
-			}
+				}
+			    //ステージ3
+			    if (stageFalg == 3) {
+				    //プレイヤー
+				    player_->State();
+
+				    //床
+				    floor_->State(scaleFloor);
+
+				    //落下
+				    for (int i = 0; i < fallNum3; i++) {
+					    fall_[i]->State(transFall3[i]);
+				    }
+
+				    //沼
+				    for (int i = 0; i < swampNum3; i++) {
+					    swamp_[i]->State(scaleSwamp, transSwamp3[i]);
+				    }
+				    //箱
+				    for (size_t i = 0; i < boxNum3; i++) {
+					    box_[i]->State(scaleBox, transBox3[i]);
+				    }
+				    //カメラ
+				    camera_->State(Vector3(0, 0, -100), Vector3(0, 0, 0));
+
+				    //ゴール
+				    goalZ = 10;
+				    goal_->State(goalZ);
+			    }
 		}
 	}
 	#pragma	endregion
@@ -560,10 +636,10 @@ void GameScene::Update() {
 	#pragma	endregion
 
 	camera_->GetFlag(stageFalg);
-	//debugText_->SetPos(0, 0);
-	//debugText_->Printf("%d", sceneFlag);
-	//debugText_->SetPos(0, 20);
-	//debugText_->Printf("%d", stageFalg);
+	debugText_->SetPos(0, 0);
+	debugText_->Printf("%d", sceneFlag);
+	debugText_->SetPos(0, 20);
+	debugText_->Printf("%d", stageFalg);
 }
 
 void GameScene::Draw() {
@@ -618,6 +694,24 @@ void GameScene::Draw() {
 			//ゴール
 			goal_->Draw(viewProjection_);
 		}
+		//ステージ3
+		if (stageFalg == 3) {
+			//落下
+			for (int i = 0; i < fallNum3; i++) {
+				fall_[i]->Draw(viewProjection_);
+			}
+
+			//沼
+			for (int i = 0; i < swampNum3; i++) {
+				swamp_[i]->Draw(viewProjection_);
+			}
+			//箱
+			for (size_t i = 0; i < boxNum3; i++) {
+				box_[i]->Draw(viewProjection_);
+			}
+			//ゴール
+			goal_->Draw(viewProjection_);
+		}
 	}
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -647,7 +741,7 @@ void GameScene::Draw() {
 	}
 	//
 	if (sceneFlag ==3) {
-		if (stageFalg!=2) {
+		if (stageFalg!=3) {
 			sprite_[2]->Draw();
 		} else {
 			sprite_[3]->Draw();
@@ -883,13 +977,13 @@ void GameScene::CheckAllCollision2() {
 }
 
 
-/* void GameScene::CheckAllCollision2() {
+ void GameScene::CheckAllCollision3() {
 	//判定対象AとBの座標
 	Vector3 posA, posB, posC;
 
 	posA = player_->GetWorldPosition();
 	posB = floor_->GetWorldPosition();
-#pragma region 自キャラと床の当たり判定
+	#pragma region 自キャラと床の当たり判定
 	//ジャンプ用
 	{
 		if (CheckHit(
@@ -909,26 +1003,15 @@ void GameScene::CheckAllCollision2() {
 			    posA.z, posA.y, r, r, posB.z, posB.y, scaleFloor.z, scaleFloor.y,
 			    posB.x + scaleFloor.x, posA.x - r)) {
 				player_->SideCollision();
-				debugText_->SetPos(100, 0);
-				debugText_->Printf("1");
 			} else if (PlaneHit(
 			             posA.x, posA.z, r, r, posB.x, posB.z, scaleFloor.x, scaleFloor.z,
 			             posB.y + scaleFloor.y, posA.y - r)) {
 				player_->UpCollision();
-				debugText_->SetPos(80, 0);
-				debugText_->Printf("2");
 			} else if (PlaneHit(
 			             posA.x, posA.z, r, r, posB.x, posB.z, scaleFloor.x, scaleFloor.z,
 			             posB.y - scaleFloor.y, posA.y + r)) {
 				player_->DownCollision();
-				debugText_->SetPos(100, 0);
-				debugText_->Printf("3");
 			}
-
-			debugText_->SetPos(60, 0);
-			debugText_->Printf("5");
-			debugText_->SetPos(20, 0);
-			debugText_->Printf("hit");
 		}
 		//床に当たっていないとき
 		// else if (!CheckHit(
@@ -938,9 +1021,9 @@ void GameScene::CheckAllCollision2() {
 		//}
 	}
 #pragma endregion
-#pragma region 自キャラと落下物の当たり判定
+	#pragma region 自キャラと落下物の当たり判定
 	{
-		for (size_t i = 0; i < fallNum2; i++) {
+		for (size_t i = 0; i < fallNum3; i++) {
 			posC = fall_[i]->GetWorldPosition();
 			if (CheckHit(posA.x, posA.y, posA.z, r, r, r, posC.x, posC.y, posC.z, r, r, r)) {
 
@@ -954,62 +1037,61 @@ void GameScene::CheckAllCollision2() {
 		}
 	}
 #pragma endregion
-#pragma region 自キャラと沼の当たり判定
+	#pragma region 自キャラと沼の当たり判定
 	{
+		for (size_t i = 0; i < swampNum3; i++) {
 
-		posC = swamp_[0]->GetWorldPosition();
-		if (SideHit(posA.z, r, posC.z, scaleSwamp.z)) {
-			player_->SwampCollision();
-		}
-	}
-#pragma endregion
-#pragma region 自キャラと箱の当たり判定
-
-	{
-		posC = box_[0]->GetWorldPosition();
-		if (CheckHit(
-		      posA.x, posA.y, posA.z, r, r, r, posC.x, posC.y, posC.z, scaleBox.x, scaleBox.y,
-		      scaleBox.z)) {
-			if (PlaneHit(
-			      posA.z, posA.y, r, r, posC.z, posC.y, scaleBox.z, scaleBox.y, posC.x + scaleBox.x,
-			      posA.x - r)) {
-				player_->SideCollision3();
-
-			} else if (PlaneHit(
-			             posA.z, posA.y, r, r, posC.z, posC.y, scaleBox.z, scaleBox.y,
-			             posC.x - scaleBox.x, posA.x + r)) {
-				player_->SideCollision4();
-
-			} else if (
-			  PlaneHit(
-			    posA.x, posA.y, r, r, posC.x, posC.y, scaleBox.x, scaleBox.y, posC.z + scaleBox.z,
-			    posA.z - r) ||
-			  PlaneHit(
-			    posA.x, posA.y, r, r, posC.x, posC.y, scaleBox.x, scaleBox.y, posC.z - scaleBox.z,
-			    posA.z + r)) {
-				player_->SideCollision2();
-				// debugText_->SetPos(100, 0);
-				// debugText_->Printf("1");
+			posC = swamp_[i]->GetWorldPosition();
+			if (SideHit(posA.z, r, posC.z, scaleSwamp.z)) {
+				player_->SwampCollision();
 			}
-
-			debugText_->SetPos(60, 0);
-			debugText_->Printf("5");
-			debugText_->SetPos(20, 0);
-			debugText_->Printf("hit");
-		}
-		//床に当たっていないとき
-		else if (
-		  !CheckHit(
-		    posA.x, posA.y, posA.z, r, r, r, posB.x, posB.y, posB.z, scaleBox.x, scaleBox.y + 1.0f,
-		    scaleBox.z) &&
-		  !CheckHit(
-		    posA.x, posA.y, posA.z, r, r, r, posB.x, posB.y, posB.z, scaleFloor.x,
-		    scaleFloor.y + 1.0f, scaleFloor.z)) {
-			player_->OffCollision();
 		}
 	}
 #pragma endregion
-#pragma region 自キャラとゴールの当たり判定
+	#pragma region 自キャラと箱の当たり判定
+
+	{
+		for (size_t i = 0; i < boxNum3; i++) {
+
+			posC = box_[i]->GetWorldPosition();
+			if (CheckHit(
+			      posA.x, posA.y, posA.z, r, r, r, posC.x, posC.y, posC.z, scaleBox.x, scaleBox.y,
+			      scaleBox.z)) {
+				if (PlaneHit(
+				      posA.z, posA.y, r, r, posC.z, posC.y, scaleBox.z, scaleBox.y,
+				      posC.x + scaleBox.x, posA.x - r)) {
+					player_->SideCollision3();
+
+				} else if (PlaneHit(
+				             posA.z, posA.y, r, r, posC.z, posC.y, scaleBox.z, scaleBox.y,
+				             posC.x - scaleBox.x, posA.x + r)) {
+					player_->SideCollision4();
+
+				} else if (
+				  PlaneHit(
+				    posA.x, posA.y, r, r, posC.x, posC.y, scaleBox.x, scaleBox.y,
+				    posC.z + scaleBox.z, posA.z - r) ||
+				  PlaneHit(
+				    posA.x, posA.y, r, r, posC.x, posC.y, scaleBox.x, scaleBox.y,
+				    posC.z - scaleBox.z, posA.z + r)) {
+					player_->SideCollision2();
+					
+				}
+			}
+			//床に当たっていないとき
+			else if (
+			  !CheckHit(
+			    posA.x, posA.y, posA.z, r, r, r, posB.x, posB.y, posB.z, scaleBox.x,
+			    scaleBox.y + 1.0f, scaleBox.z) &&
+			  !CheckHit(
+			    posA.x, posA.y, posA.z, r, r, r, posB.x, posB.y, posB.z, scaleFloor.x,
+			    scaleFloor.y + 1.0f, scaleFloor.z)) {
+				player_->OffCollision();
+			}
+		}
+	}
+#pragma endregion
+	#pragma region 自キャラとゴールの当たり判定
 
 	{
 		posC = goal_->GetWorldPosition();
@@ -1018,4 +1100,4 @@ void GameScene::CheckAllCollision2() {
 		}
 	}
 #pragma endregion
-}*/
+}
